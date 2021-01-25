@@ -38,22 +38,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="sass">
 
-@media screen and (min-width: 1201px)
-  div.components
-    opacity: 100%
-    position: center
-    width: 1200px
-    height: 100%
-    margin: auto
-
-@media screen and (max-width: 1200px)
-  div.components
-    opacity: 100%
-    position: center
-    width: 100%
-    height: 100%
-    margin: auto
-
 div
   &.panel
     margin-left: 5px
@@ -62,6 +46,16 @@ div
     background: #2E3440
     height: 60px
     box-shadow: 0 0 8px 8px #00000010
+
+  &.components
+    opacity: 100%
+    position: center
+    height: 100%
+    @media screen and (min-width: 1201px)
+      width: 1200px
+    @media screen and (max-width: 1200px)
+      width: 100%
+    margin: auto
 
   &.titlediv
     display: flex
@@ -94,16 +88,12 @@ button.logoutbtn
   &:hover
     background-color: #8FBCBB
 
-@media screen and (min-width: 601px)
-  span.title
-    font-family: Roboto, sans-serif
+span.title
+  font-family: Roboto, sans-serif
+  @media screen and (min-width: 601px)
     font-size: 30px
-    color: #ECEFF4
-
-@media screen and (max-width: 600px)
-  span.title
-    font-family: Roboto, sans-serif
+  @media screen and (max-width: 600px)
     font-size: 20px
-    color: #ECEFF4
+  color: #ECEFF4
 
 </style>

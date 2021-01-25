@@ -74,6 +74,13 @@ div
     left: 0
     top: 0
 
+  &.mainbox
+    display: flex
+    flex-grow: 1
+    @media screen and (min-width: 1201px)
+      width: 1200px
+      margin: auto
+
   &.left
     flex-flow: column
     display: flex
@@ -104,15 +111,4 @@ div
     width: 100%
     border-radius: 15px 15px 0 0
 
-@media screen and (min-width: 1201px)
-  div.mainbox
-    display: flex
-    flex-grow: 1
-    width: 1200px
-    margin: auto
-
-@media screen and (max-width: 1200px)
-  div.mainbox
-    display: flex
-    flex-grow: 1
 </style>
