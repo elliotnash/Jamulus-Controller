@@ -60,60 +60,59 @@ export default {
 }
 </script>
 
-<style >
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-div.background {
-  display:flex;
-  flex-flow: column;
-  background: #3B4252;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  top: 0;
-}
-@media screen and (min-width: 1201px) {
-  div.mainbox {
-    display: flex;
-    flex-grow: 1;
-    width: 1200px;
-    margin: auto;
-  }
-}
-@media screen and (max-width: 1200px) {
-  div.mainbox {
-    display: flex;
-    flex-grow: 1;
-  }
-}
-div.left {
-  flex-flow: column;
-  display: flex;
-  width: 33.33%;
-}
-div.right {
-  display: flex;
-  flex-grow: 1;
-}
-div.itemdiv {
-  align-content: center;
-  display: flex;
-  width: 100%;
-  height: 100%;
-}
-div.box {
-  box-shadow: 0 0 8px 8px #00000010;
-  display: flex;
-  background: #434C5E;
-  width: 100%;
-  height: auto;
-  margin: 20px;
-  border-radius: 15px;
-}
-div.boxheader {
-  background: #2E3440;
-  height: 50px;
-  width: 100%;
-  border-radius: 15px 15px 0 0;
-}
+<style lang="sass">
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap')
+
+div
+  &.background
+    display: flex
+    flex-flow: column
+    background: #3B4252
+    position: fixed
+    bottom: 0
+    right: 0
+    left: 0
+    top: 0
+
+  &.left
+    flex-flow: column
+    display: flex
+    width: 33.33%
+
+  &.right
+    display: flex
+    flex-grow: 1
+
+  &.itemdiv
+    align-content: center
+    display: flex
+    width: 100%
+    height: 100%
+
+  &.box
+    box-shadow: 0 0 8px 8px #00000010
+    display: flex
+    background: #434C5E
+    width: 100%
+    height: auto
+    margin: 20px
+    border-radius: 15px
+
+  &.boxheader
+    background: #2E3440
+    height: 50px
+    width: 100%
+    border-radius: 15px 15px 0 0
+
+@media screen and (min-width: 1201px)
+  div.mainbox
+    display: flex
+    flex-grow: 1
+    width: 1200px
+    margin: auto
+
+@media screen and (max-width: 1200px)
+  div.mainbox
+    display: flex
+    flex-grow: 1
 </style>
