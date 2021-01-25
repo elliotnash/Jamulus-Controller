@@ -1,18 +1,33 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="overlay">
+    <Header displayName="Jamulus Recordings"/>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+
+import Header from '@/components/Header'
 
 export default {
   name: 'Home',
   components: {
-    HelloWorld
+    Header
+  },
+  created () {
+
+    document.title = 'Jamulus Recordings'
+
   }
 }
 </script>
+
+<style>
+.overlay {
+  background: #3B4252;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  top: 0;
+}
+</style>
