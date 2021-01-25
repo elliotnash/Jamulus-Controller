@@ -5,23 +5,35 @@
         <span id="title" class="title">{{ displayName }}</span>
       </div>
       <div class="buttondiv">
-        <button class="logoutbtn">Log Out</button>
+        <button v-wave id="logoutbtn" class="logoutbtn" @click="onClick($event)">Log Out</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
+import VWave from 'v-wave'
+
+Vue.use(VWave)
+
 export default {
   name: 'Header',
   props: {
     displayName: String
+  },
+  modules: ['v-wave/nuxt'],
+  methods: {
+    onClick(event) {
+      this.createRipple(event);
+    },
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 .panel {
   border-radius: 0 0 10px 10px;
   background: #2E3440;
@@ -71,15 +83,14 @@ button.logoutbtn {
   border: none;
   background-color: #88C0D0;
   border-radius: 10px;
-  font-size: 20px;
-  padding: 6px;
+  font-size: 18px;
+  font-family: Roboto, sans-serif;
+  color: #4C566A;
+  padding: 8px;
   outline: none
 }
 button.logoutbtn:hover {
   background-color: #8FBCBB;
-}
-button.logoutbtn:active {
-  background-color: #81A1C1;
 }
 
 @media screen and (min-width: 601px) {
