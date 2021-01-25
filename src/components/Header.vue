@@ -79,10 +79,10 @@ button.logoutbtn
   border: none
   background-color: #88C0D0
   border-radius: 10px
-  font-size: 18px
+  font-size: 14px
   font-family: ABeeZee, sans-serif
   color: #4C566A
-  padding: 8px
+  padding: 10px
   outline: none
 
   &:hover

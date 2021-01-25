@@ -6,13 +6,15 @@
         <div class="itemdiv">
           <div class="box">
             <div class="boxheader">
-
+              <span class="boxtitle">CONTROLS</span>
             </div>
+            <ControlBox/>
           </div>
         </div>
         <div class="itemdiv">
           <div class = "box">
             <div class="boxheader">
+              <span class="boxtitle">SYSTEM INFO</span>
             </div>
           </div>
         </div>
@@ -20,6 +22,7 @@
       <div class = "right">
         <div class = "box">
           <div class="boxheader">
+            <span class="boxtitle">RECORDINGS</span>
           </div>
         </div>
       </div>
@@ -30,6 +33,8 @@
 <script>
 
 import Header from '@/components/Header'
+import ControlBox from "@/components/ControlBox";
+
 import Vue from 'vue'
 import VWave from 'v-wave'
 Vue.use(VWave, {
@@ -43,6 +48,7 @@ Vue.use(VWave, {
 export default {
   name: 'Panel',
   components: {
+    ControlBox,
     Header
   },
   methods: {
@@ -94,11 +100,12 @@ div
     align-content: center
     display: flex
     width: 100%
-    height: 100%
+    height: auto
 
   &.box
     box-shadow: 0 0 8px 8px #00000010
     display: flex
+    flex-flow: column
     background: #434C5E
     width: 100%
     height: auto
@@ -110,5 +117,18 @@ div
     height: 40px
     width: 100%
     border-radius: 15px 15px 0 0
+    display: flex
+    justify-content: left
+    align-items: center
+
+span.boxtitle
+  margin-left: 12px
+  margin-top: 1px
+  font-family: ABeeZee, sans-serif
+  @media screen and (min-width: 601px)
+    font-size: 18px
+  @media screen and (max-width: 600px)
+    font-size: 16px
+  color: #ECEFF4
 
 </style>
