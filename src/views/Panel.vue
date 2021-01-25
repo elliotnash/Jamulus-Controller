@@ -9,6 +9,7 @@
               <span class="boxtitle">CONTROLS</span>
             </div>
             <ControlBox/>
+
           </div>
         </div>
         <div class="itemdiv">
@@ -16,6 +17,7 @@
             <div class="boxheader">
               <span class="boxtitle">SYSTEM INFO</span>
             </div>
+            <InfoBox/>
           </div>
         </div>
       </div>
@@ -34,6 +36,7 @@
 
 import Header from '@/components/Header'
 import ControlBox from "@/components/ControlBox";
+import InfoBox from "@/components/InfoBox";
 
 import Vue from 'vue'
 import VWave from 'v-wave'
@@ -48,6 +51,7 @@ Vue.use(VWave, {
 export default {
   name: 'Panel',
   components: {
+    InfoBox,
     ControlBox,
     Header
   },
