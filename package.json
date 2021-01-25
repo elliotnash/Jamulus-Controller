@@ -23,7 +23,9 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "vue-template-compiler": "^2.6.11",
-    "v-wave": "^1.2.3"
+    "v-wave": "^1.2.3",
+    "sass-loader": "^10.1.1",
+    "node-sass": "^5.0.0"
   },
   "eslintConfig": {
     "root": true,
@@ -36,8 +38,7 @@
     ],
     "parserOptions": {
       "parser": "babel-eslint"
-    },
-    "rules": {}
+    }
   },
   "browserslist": [
     "> 1%",

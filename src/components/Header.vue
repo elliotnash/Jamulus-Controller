@@ -5,7 +5,7 @@
         <span id="title" class="title">{{ displayName }}</span>
       </div>
       <div class="buttondiv">
-        <button v-wave id="logoutbtn" class="logoutbtn" @click="onClick($event)">Log Out</button>
+        <button v-wave id="logoutbtn" class="logoutbtn" @click="onLogOutClick($event)">Log Out</button>
       </div>
     </div>
   </div>
@@ -15,7 +15,11 @@
 import Vue from 'vue'
 import VWave from 'v-wave'
 
-Vue.use(VWave)
+Vue.use(VWave, {
+  color: '#2E3440',
+  startingOpacity: 0.5,
+  easing: 'ease-out',
+})
 
 export default {
   name: 'Header',
@@ -24,8 +28,8 @@ export default {
   },
   modules: ['v-wave/nuxt'],
   methods: {
-    onClick(event) {
-      this.createRipple(event);
+    onLogOutClick(event) {
+      this.$emit('clickLogOut', event)
     },
   }
 }
@@ -33,11 +37,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 .panel {
+  margin-left: 5px;
+  margin-right: 5px;
   border-radius: 0 0 10px 10px;
   background: #2E3440;
   height: 60px;
+  box-shadow: 0 0 8px 8px #00000010;
 }
 @media screen and (min-width: 1201px) {
   div.components {
