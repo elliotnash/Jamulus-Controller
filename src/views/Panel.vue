@@ -13,7 +13,6 @@
         <div class="itemdiv">
           <div class = "box">
             <div class="boxheader">
-
             </div>
           </div>
         </div>
@@ -21,7 +20,6 @@
       <div class = "right">
         <div class = "box">
           <div class="boxheader">
-
           </div>
         </div>
       </div>
@@ -34,12 +32,13 @@
 import Header from '@/components/Header'
 import Vue from 'vue'
 import VWave from 'v-wave'
-
 Vue.use(VWave, {
   color: '#2E3440',
   startingOpacity: 0.5,
   easing: 'ease-out',
 })
+
+
 
 export default {
   name: 'Panel',
@@ -61,7 +60,8 @@ export default {
 </script>
 
 <style lang="sass">
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap')
+@import url('https://fonts.googleapis.com/css2?family=Roboto')
+@import url('https://fonts.googleapis.com/css?family=ABeeZee')
 
 div
   &.background
@@ -107,7 +107,7 @@ div
 
   &.boxheader
     background: #2E3440
-    height: 50px
+    height: 40px
     width: 100%
     border-radius: 15px 15px 0 0
 

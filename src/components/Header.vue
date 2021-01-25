@@ -60,7 +60,7 @@ div
   &.titlediv
     display: flex
     justify-content: left
-    margin-left: 14px
+    margin-left: 30px
     align-items: center
     height: 100%
     width: auto
@@ -69,7 +69,7 @@ div
   &.buttondiv
     display: flex
     justify-content: right
-    margin-right: 14px
+    margin-right: 30px
     align-items: center
     height: 100%
     width: auto
@@ -80,7 +80,7 @@ button.logoutbtn
   background-color: #88C0D0
   border-radius: 10px
   font-size: 18px
-  font-family: Roboto, sans-serif
+  font-family: ABeeZee, sans-serif
   color: #4C566A
   padding: 8px
   outline: none
@@ -89,7 +89,7 @@ button.logoutbtn
     background-color: #8FBCBB
 
 span.title
-  font-family: Roboto, sans-serif
+  font-family: ABeeZee, sans-serif
   @media screen and (min-width: 601px)
     font-size: 30px
   @media screen and (max-width: 600px)
