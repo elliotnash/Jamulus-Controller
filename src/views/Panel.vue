@@ -2,7 +2,7 @@
   <div class="background">
     <Header @clickLogOut="onLogOutClick($event)" displayName="Jamulus Recordings"/>
     <div class="mainbox">
-      <div class="left">
+      <div class="leftpanel">
         <div class="itemdiv">
           <div class="box">
             <div class="boxheader">
@@ -21,11 +21,12 @@
           </div>
         </div>
       </div>
-      <div class = "right">
-        <div class = "box">
+      <div class = "rightpanel">
+        <div class = "recordingsbox">
           <div class="boxheader">
             <span class="boxtitle">RECORDINGS</span>
           </div>
+          <RecordingBox/>
         </div>
       </div>
     </div>
@@ -36,6 +37,7 @@
 import Header from '@/components/Header'
 import ControlBox from "@/components/ControlBox";
 import InfoBox from "@/components/InfoBox";
+import RecordingBox from "@/components/RecordingBox";
 
 import Vue from 'vue'
 import VWave from 'v-wave'
@@ -48,6 +50,7 @@ Vue.use(VWave, {
 export default {
   name: 'Panel',
   components: {
+    RecordingBox,
     InfoBox,
     ControlBox,
     Header
@@ -91,20 +94,21 @@ div
     display: flex
     flex-grow: 1
     @media screen and (max-width: 800px)
-      flex-flow: column
+      flex-flow: column-reverse
     @media screen and (min-width: 1201px)
       width: 1200px
       margin: auto
 
-  &.left
+  &.leftpanel
     flex-flow: column
     display: flex
     @media screen and (min-width: 801px)
       width: 400px
 
-  &.right
+  &.rightpanel
     display: flex
     flex-grow: 1
+    height: fit-content
 
   &.itemdiv
     align-content: center
@@ -121,6 +125,10 @@ div
     height: auto
     margin: 20px
     border-radius: 15px
+
+  &.recordingsbox
+    @extend div.box
+    border-radius: 15px 15px 5px 5px
 
   &.boxheader
     background: #2E3440
