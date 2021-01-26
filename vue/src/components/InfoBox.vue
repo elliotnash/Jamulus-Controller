@@ -7,10 +7,10 @@
       <span class="boxtitle">CLIENTS CONNECTED: 0</span>
     </div>
     <div class="itemdiv">
-      <span class="boxtitle">CPU USAGE: 0%</span>
+      <span class="boxtitle">CPU USAGE: {{systemInfo.cpuUsage}}%</span>
     </div>
     <div class="itemdiv">
-      <span class="boxtitle">MEMORY USAGE: 0/2000MB</span>
+      <span class="boxtitle">MEMORY USAGE: {{systemInfo.memUsed}}/{{systemInfo.totalMem}}MB</span>
     </div>
     <div class="spacer"></div>
   </div>
@@ -18,7 +18,8 @@
 
 <script>
 export default {
-name: "InfoBox"
+  name: "InfoBox",
+  props: ['systemInfo']
 }
 </script>
 

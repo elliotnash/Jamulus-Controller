@@ -5,7 +5,7 @@
         <span class="boxtitle">TOGGLE RECORDING STATE</span>
       </div>
       <div class="right">
-        <button slot="pure" onselectstart="return false;" id="toggle-record" @click="recordingToggle($event)"
+        <button slot="pure" onselectstart="return false;" id="toggle-record" @click="$emit('recordToggle',$event)"
                 :class="recordingState ? 'redbtn' : 'bluebtn'" v-wave
                 v-text="recordingState ? 'STOP RECORDING' : 'START RECORDING'" />
       </div>
@@ -59,10 +59,6 @@ export default {
     recordingState: Boolean
   },
   methods: {
-    recordingToggle(event){
-      console.log(event)
-      this.recordingState = !this.recordingState;
-    },
     newRecording(event){
       console.log(event)
     },

@@ -8,7 +8,7 @@
             <div class="boxheader">
               <span class="boxtitle">CONTROLS</span>
             </div>
-            <ControlBox v-bind:recording-state="recordingState" />
+            <ControlBox v-bind:recording-state="recordingState" @recordToggle="onRecordToggle($event)"/>
 
           </div>
         </div>
@@ -17,7 +17,7 @@
             <div class="boxheader">
               <span class="boxtitle">SYSTEM INFO</span>
             </div>
-            <InfoBox/>
+            <InfoBox :system-info="systemInfo"/>
           </div>
         </div>
       </div>
@@ -40,6 +40,8 @@ import ControlBox from "@/components/ControlBox";
 import InfoBox from "@/components/InfoBox";
 import RecordingBox from "@/components/RecordingBox";
 
+import io from 'socket.io-client';
+
 import Vue from 'vue'
 import VWave from 'v-wave'
 Vue.use(VWave, {
@@ -59,18 +61,42 @@ export default {
   data () {
     return {
       recordingState: false,
+      socket: null,
+      systemInfo: {cpuUsage: '0', totalMem:'0', memUsed: '0'}
     }
   },
   methods: {
     onLogOutClick(event){
       console.log('Clicked it')
       console.log(event)
+
+    },
+    onRecordToggle(event){
+      console.log(event)
+      this.socket.emit('RECORD_TOGGLE', {
+        newState: !this.recordingState
+      })
     }
   },
   created () {
 
     document.title = 'Jamulus Recordings'
 
+    //initialize websocket
+    const host = window.location.host;
+    console.log(host)
+    this.socket = io('http://192.168.0.196:3080')
+
+  },
+  mounted () {
+    this.socket.on('RECORD_TOGGLE', (data) => {
+      console.log('Received state update')
+      this.recordingState = data.newState
+    });
+    this.socket.on('SYSTEM_INFO', (data) => {
+      console.log('Received state update')
+      this.systemInfo = data;
+    });
   }
 }
 </script>

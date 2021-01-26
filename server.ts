@@ -1,11 +1,18 @@
 const path = require('path');
+const os = require('os-utils');
 
 const express = require('express');
 const app = express()
 const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const io = require('socket.io')(http, {
+    cors: {
+        origin: '*'
+    }
+});
 
 const config = require('./config.json');
+
+let recordState = false;
 
 
 app.use(express.static(path.join(__dirname, 'vue/dist')));
@@ -19,15 +26,40 @@ http.listen(config.port, () => {
     console.log('Server listening at http://localhost:%s', port)
 });
 
-io.on('connection', function(socket) {
+const totalMem = Math.round(os.totalmem());
+function updateInfo() {
+    os.cpuUsage( function(cpuUsage) {
+        const systemInfo = {
+            cpuUsage: Math.round(cpuUsage*100),
+            totalMem: totalMem,
+            memUsed: Math.round(totalMem-os.freemem())
+        }
+        io.emit('SYSTEM_INFO', systemInfo)
+    })
+}
+
+setInterval(updateInfo, 3000)
+
+function changeState(newState){
+    recordState = newState
+}
+
+io.on('connection', (socket) => {
     console.log('Client connected to the WebSocket');
+    socket.emit('RECORD_TOGGLE', {
+        newState: recordState
+    })
 
     socket.on('disconnect', () => {
         console.log('Client disconnected');
     });
 
-    socket.on('chat message', function(msg) {
-        console.log("Received a chat message");
-        io.emit('chat message', msg);
+    socket.on('RECORD_TOGGLE', (data) => {
+        console.log("Record state toggled");
+        console.log(data.newState)
+        changeState(data.newState)
+        io.emit('RECORD_TOGGLE', {
+            newState: recordState
+        });
     });
 })
