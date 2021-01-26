@@ -1,17 +1,33 @@
-const express = require('express');
 const path = require('path');
-const app = express(),
-    bodyParser = require("body-parser"),
-    port = 3080;
+
+const express = require('express');
+const app = express()
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
+const config = require('./config.json');
 
 
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, './vue/dist')));
+app.use(express.static(path.join(__dirname, 'vue/dist')));
 
 app.get('/', (req,res) => {
-    res.sendFile(path.join(__dirname, './vue/dist/index.html'));
+    res.sendFile(path.join(__dirname, 'vue/dist/index.html'));
 });
 
-app.listen(port, () => {
-    console.log(`Server listening on the port::${port}`);
+http.listen(config.port, () => {
+    const port = http.address().port;
+    console.log('Server listening at http://localhost:%s', port)
 });
+
+io.on('connection', function(socket) {
+    console.log('Client connected to the WebSocket');
+
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+
+    socket.on('chat message', function(msg) {
+        console.log("Received a chat message");
+        io.emit('chat message', msg);
+    });
+})
