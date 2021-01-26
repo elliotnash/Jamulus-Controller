@@ -4,7 +4,7 @@
       <div class="titlediv">
         <span id="title" class="title">{{ displayName }}</span>
       </div>
-      <div class="buttondiv">
+      <div v-if="showLogOut" class="buttondiv">
         <button v-wave onselectstart="return false;" id="logoutbtn" class="logoutbtn" @click="onLogOutClick($event)">Log Out</button>
       </div>
     </div>
@@ -24,7 +24,8 @@ Vue.use(VWave, {
 export default {
   name: 'Header',
   props: {
-    displayName: String
+    displayName: String,
+    showLogOut: Boolean
   },
   modules: ['v-wave/nuxt'],
   methods: {
@@ -45,7 +46,7 @@ div
     border-radius: 0 0 10px 10px
     background: #2E3440
     height: 60px
-    box-shadow: 0 0 8px 8px #00000010
+    box-shadow: 0 0 8px 8px #00000020
 
   &.components
     position: center

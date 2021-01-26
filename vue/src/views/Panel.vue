@@ -1,6 +1,6 @@
 <template>
   <div class="background">
-    <Header @clickLogOut="onLogOutClick($event)" displayName="Jamulus Recordings"/>
+    <Header @clickLogOut="onLogOutClick($event)" displayName="Jamulus Recordings" :show-log-out="true"/>
     <div class="mainbox">
       <div class="leftpanel">
         <div class="itemdiv">

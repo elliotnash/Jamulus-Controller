@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Panel from '@/views/Panel'
+import store from '@/store/index'
 
 Vue.use(VueRouter)
 
@@ -8,17 +8,25 @@ const routes = [
   {
     path: '/',
     name: 'Panel',
-    component: Panel
+    component: () => import('@/views/Panel'),
+    beforeEnter: (to, from, next) => {
+      //authentication to prevent loading panel when not logged in
+      if(store.state.authenticated === false) {
+        next();
+      } else {
+        next();
+      }
+    }
   },
   {
-    path: '/about',
-    name: 'About',
-    component: () => import('../views/About.vue')
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/Login.vue')
   },
   {
     path: '*',
     name: 'About',
-    component: () => import('../views/About.vue')
+    component: () => import('@/views/About.vue')
   }
 ]
 
