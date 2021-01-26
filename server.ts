@@ -4,6 +4,8 @@ const os = require('os-utils');
 const express = require('express');
 const app = express()
 const http = require('http').createServer(app);
+let jwt = require("jsonwebtoken");
+const socketioJwt = require("socketio-jwt");
 const io = require('socket.io')(http, {
     cors: {
         origin: '*'
