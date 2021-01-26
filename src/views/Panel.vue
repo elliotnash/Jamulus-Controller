@@ -8,7 +8,7 @@
             <div class="boxheader">
               <span class="boxtitle">CONTROLS</span>
             </div>
-            <ControlBox/>
+            <ControlBox v-bind:recording-state="recordingState" />
 
           </div>
         </div>
@@ -33,7 +33,6 @@
 </template>
 
 <script>
-
 import Header from '@/components/Header'
 import ControlBox from "@/components/ControlBox";
 import InfoBox from "@/components/InfoBox";
@@ -46,14 +45,17 @@ Vue.use(VWave, {
   easing: 'ease-out',
 })
 
-
-
 export default {
   name: 'Panel',
   components: {
     InfoBox,
     ControlBox,
     Header
+  },
+  data () {
+    return {
+      recordingState: false,
+    }
   },
   methods: {
     onLogOutClick(event){
@@ -75,6 +77,7 @@ export default {
 
 div
   &.background
+    overflow-y: auto
     display: flex
     flex-flow: column
     background: #3B4252
@@ -87,6 +90,8 @@ div
   &.mainbox
     display: flex
     flex-grow: 1
+    @media screen and (max-width: 800px)
+      flex-flow: column
     @media screen and (min-width: 1201px)
       width: 1200px
       margin: auto
@@ -94,7 +99,8 @@ div
   &.left
     flex-flow: column
     display: flex
-    width: 33.33%
+    @media screen and (min-width: 801px)
+      width: 400px
 
   &.right
     display: flex

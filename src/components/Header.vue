@@ -5,7 +5,7 @@
         <span id="title" class="title">{{ displayName }}</span>
       </div>
       <div class="buttondiv">
-        <button v-wave id="logoutbtn" class="logoutbtn" @click="onLogOutClick($event)">Log Out</button>
+        <button v-wave onselectstart="return false;" id="logoutbtn" class="logoutbtn" @click="onLogOutClick($event)">Log Out</button>
       </div>
     </div>
   </div>
@@ -78,15 +78,25 @@ div
 button.logoutbtn
   border: none
   background-color: #88C0D0
-  border-radius: 10px
+  border-radius: 6px
   font-size: 14px
   font-family: ABeeZee, sans-serif
   color: #4C566A
   padding: 10px
   outline: none
 
+  -webkit-touch-callout: none
+  -webkit-user-select: none
+  -khtml-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  -o-user-select: none
+  user-select: none
+
   &:hover
     background-color: #8FBCBB
+
+
 
 span.title
   font-family: ABeeZee, sans-serif

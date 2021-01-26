@@ -1,4 +1,4 @@
-<template>
+<template lang="html">
   <div class="contentbox">
     <div class="itemdiv">
 
@@ -30,6 +30,7 @@ div
     height: auto
     width: 100%
   &.itemdiv
+    display: flex
     background: #3B4252
     margin-top: 20px
     height: 60px
