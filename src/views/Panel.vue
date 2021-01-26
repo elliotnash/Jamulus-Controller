@@ -30,6 +30,7 @@
         </div>
       </div>
     </div>
+    <span class="copyright">©2020 Elliot Nash</span>
   </div>
 </template>
 
@@ -81,7 +82,6 @@ export default {
 div
   &.background
     overflow-y: auto
-    display: flex
     flex-flow: column
     background: #3B4252
     position: fixed
@@ -89,19 +89,21 @@ div
     right: 0
     left: 0
     top: 0
+    align-content: center
 
   &.mainbox
     display: flex
-    flex-grow: 1
+    height: fit-content
+    margin: auto
     @media screen and (max-width: 800px)
       flex-flow: column-reverse
     @media screen and (min-width: 1201px)
       width: 1200px
-      margin: auto
 
   &.leftpanel
     flex-flow: column
     display: flex
+    height: fit-content
     @media screen and (min-width: 801px)
       width: 400px
 
@@ -139,14 +141,23 @@ div
     justify-content: left
     align-items: center
 
-span.boxtitle
-  margin-left: 12px
-  margin-top: 1px
-  font-family: ABeeZee, sans-serif
-  @media screen and (min-width: 601px)
-    font-size: 18px
-  @media screen and (max-width: 600px)
-    font-size: 16px
-  color: #ECEFF4
+span
+  &.boxtitle
+    margin-left: 12px
+    margin-top: 1px
+    font-family: ABeeZee, sans-serif
+    @media screen and (min-width: 601px)
+      font-size: 18px
+    @media screen and (max-width: 600px)
+      font-size: 16px
+    color: #ECEFF4
+
+  &.copyright
+    font-family: ABeeZee, sans-serif
+    font-size: 10px
+    color: #8994a9
+    padding-bottom: 20px
+
+
 
 </style>
