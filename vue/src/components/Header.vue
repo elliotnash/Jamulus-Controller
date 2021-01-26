@@ -48,7 +48,6 @@ div
     box-shadow: 0 0 8px 8px #00000010
 
   &.components
-    opacity: 100%
     position: center
     height: 100%
     @media screen and (min-width: 1201px)

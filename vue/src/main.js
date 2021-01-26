@@ -15,6 +15,8 @@ Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.config.productionTip = false
 
+router.mode = "hash"
+
 new Vue({
   store,
   router,

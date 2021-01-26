@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Panel from '@/views/Panel'
 
 Vue.use(VueRouter)
 
@@ -7,7 +8,7 @@ const routes = [
   {
     path: '/',
     name: 'Panel',
-    component: () => import('@/views/Panel')
+    component: Panel
   },
   {
     path: '/about',
