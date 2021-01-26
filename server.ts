@@ -17,10 +17,10 @@ const config = require('./config.json');
 let recordState = false;
 
 
-app.use(express.static(path.join(__dirname, 'client/dist')));
+app.use(express.static(path.join(__dirname, 'build')));
 
 app.get('/*', (req,res) => {
-    res.sendFile(path.join(__dirname, 'client/dist/index.html'));
+    res.sendFile(path.join(__dirname, 'build/index.html'));
 });
 
 http.listen(config.port, () => {
