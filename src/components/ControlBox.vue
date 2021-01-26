@@ -137,7 +137,7 @@ button
       background-color: #da9e8b
 
 span.boxtitle
-  margin-left: 12px
+  margin: auto
   font-family: ABeeZee, sans-serif
   font-size: 15px
   color: #ECEFF4
