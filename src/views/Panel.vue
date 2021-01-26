@@ -126,17 +126,17 @@ div
     width: 100%
     height: auto
     margin: 20px
-    border-radius: 15px
+    border-radius: 10px
 
   &.recordingsbox
     @extend div.box
-    border-radius: 15px 15px 5px 5px
+    border-radius: 10px 10px 5px 5px
 
   &.boxheader
     background: #2E3440
     height: 40px
     width: 100%
-    border-radius: 15px 15px 0 0
+    border-radius: 10px 10px 0 0
     display: flex
     justify-content: left
     align-items: center
