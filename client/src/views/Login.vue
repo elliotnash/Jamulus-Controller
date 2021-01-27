@@ -13,7 +13,7 @@
               <div class="textdiv">
                 <span class="inputtitle">Username</span>
               </div>
-              <input class="inputbox" type="text" name="username" v-model="input.username" placeholder="Username" />
+              <input class="inputbox" type="email" name="username" v-model="input.username" placeholder="Username" />
             </div>
             <div class="smallspacer"/>
             <div class="inputfeild">

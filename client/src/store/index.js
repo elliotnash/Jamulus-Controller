@@ -49,6 +49,7 @@ const store = new Vuex.Store({
         if (credentials == null || credentials.user == null || credentials.passHash == null){
           console.log('null credentials')
           reject()
+          return;
         }
 
         socket.emit('authenticate', credentials, (allowed) => {
