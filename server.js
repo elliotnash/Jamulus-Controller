@@ -1,5 +1,6 @@
 const path = require('path');
 const os = require('os-utils');
+const { exec } = require("child_process");
 
 const express = require('express');
 const app = express()
@@ -48,8 +49,51 @@ function updateInfo() {
 setInterval(updateInfo, 1000)
 
 function changeState(newState){
-    recordState = newState
+    if (recordState !== newState){
+        recordState = newState
+
+        //state was changed, time to fire recording change
+
+
+
+    } else {
+
+    }
+
+    authenticatedSockets.forEach((socket) => {
+        socket.emit('RECORD_TOGGLE', {
+            newState: recordState
+        });
+    })
 }
+
+const stateRegex = /(Recording state )(enabled|disabled)/gm;
+function readRecordState(){
+
+    exec(`journalctl -u ${config.systemdServiceName} --no-pager -q -n 25`, (error, stdout, stderr) => {
+        if (error) {
+            console.log(`error: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.log(`stderr: ${stderr}`);
+            return;
+        }
+        let matches = stdout.match(stateRegex);
+        let lastMatch = matches[matches.length-1];
+
+        //have the last state
+        if (lastMatch === 'Recording state enabled'){
+            console.log('Recording is enabled')
+        } else {
+            console.log('Recording is disabled')
+        }
+
+    });
+
+}
+
+readRecordState();
 
 let authenticatedSockets = new Set()
 
@@ -91,11 +135,6 @@ io.on('connection', (socket) => {
 
         if (authenticatedSockets.has(socket)) {
             changeState(data.newState)
-            authenticatedSockets.forEach((socket) => {
-                socket.emit('RECORD_TOGGLE', {
-                    newState: recordState
-                });
-            })
         }
     });
 })

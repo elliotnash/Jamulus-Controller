@@ -2,5 +2,6 @@
   "port" : "80",
   "users": {
     "user": "password"
-  }
+  },
+  "systemdServiceName": "Jamulus-Server"
 }
