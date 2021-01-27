@@ -46,61 +46,75 @@ function updateInfo() {
     })
 }
 
-setInterval(updateInfo, 1000)
-
-function changeState(newState){
-    if (recordState !== newState){
-        recordState = newState
-
-        //state was changed, time to fire recording change
-
-
-
-    } else {
-
-    }
-
-    authenticatedSockets.forEach((socket) => {
-        socket.emit('RECORD_TOGGLE', {
-            newState: recordState
-        });
-    })
-}
-
 const stateRegex = /(Recording state )(enabled|disabled)/gm;
 function readRecordState(){
 
     exec(`journalctl -u ${config.systemdServiceName} --no-pager -q -n 25`, (error, stdout, stderr) => {
         if (error) {
             console.log(`error: ${error.message}`);
-            return;
+            return false;
         }
         if (stderr) {
             console.log(`stderr: ${stderr}`);
-            return;
+            return false;
         }
         let matches = stdout.match(stateRegex);
 
         if (matches == null){
-            return;
+            return false;
         }
 
         let lastMatch = matches[matches.length-1];
 
         //have the last state
-        if (lastMatch === 'Recording state enabled'){
-            console.log('Recording is enabled')
-        } else {
-            console.log('Recording is disabled')
-        }
+        return lastMatch === 'Recording state enabled';
 
     });
 
 }
 
-readRecordState();
+setInterval(updateInfo, 1000)
+setInterval(readRecordState, 900)
+
+function changeState(newState){
+    if (recordState !== newState){
+        //state was changed, time to fire recording change
+
+        exec(`sudo systemctl kill -s SIGUSR2 ${config.systemdServiceName}`, {timeout: 20}, (error, stdout, stderr) => {
+            if (error) {
+                console.log(`error: ${error.message}`);
+                return;
+            }
+            if (stderr) {
+                console.log(`stderr: ${stderr}`);
+                return;
+            }
+            //command went through
+            //set local status
+            recordState = newState
+
+            //update all clients
+            updateAuthClientState();
+
+            //sync real state now - seems like time with least interference
+            recordState = readRecordState();
+
+        });
+
+    } else {
+        updateAuthClientState();
+    }
+}
 
 let authenticatedSockets = new Set()
+
+function updateAuthClientState(){
+    authenticatedSockets.forEach((socket) => {
+        socket.emit('RECORD_TOGGLE', {
+            newState: recordState
+        });
+    })
+}
 
 io.on('connection', (socket) => {
 

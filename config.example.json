@@ -3,5 +3,6 @@
   "users": {
     "user": "password"
   },
-  "systemdServiceName": "jamulus"
+  "systemdServiceName": "jamulus",
+  "recordingDirectory": "/home/jamulus/Jamulus-Recordings"
 }
