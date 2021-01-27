@@ -68,18 +68,12 @@ export default {
         passHash: passwordHash.generate(this.input.password)
       }).then(() => {
         this.$router.push('/')
+      }, () => {
+        console.log('incorrect pass')
       })
 
     }
-
-      // if(this.input.username === "admin" && this.input.password === "pass") {
-      //   console.log('authentication successful')
-      //   this.$store.commit("setAuthentication", true)
-      //   this.$router.push('/')
-      // } else {
-      //   console.log("The username and / or password is incorrect");
-      // }
-    }
+  }
 }
 </script>
 

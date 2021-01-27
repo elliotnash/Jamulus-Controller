@@ -11,11 +11,16 @@ const routes = [
     component: () => import('@/views/Panel'),
     beforeEnter: (to, from, next) => {
       //authentication to prevent loading panel when not logged in
-      if (store.state.authenticated){
+      //fetch credentials from cookie to see if can resume session
+      store.commit("fetchCredentials")
+
+      store.dispatch('authenticate', store.state.credentials).then(() => {
+        console.log('auth success')
         next()
-      } else {
+      }, () => {
+        console.log('auth fail')
         next('/login')
-      }
+      })
     }
   },
   {

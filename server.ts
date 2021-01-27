@@ -57,6 +57,10 @@ io.on('connection', (socket) => {
     });
 
     socket.on('authenticate', (data, callback) => {
+        if (data == null){
+            callback(false)
+        }
+
         if (data.user in config.users){
             //user exists
             if (passwordHash.verify(config.users[data.user], data.passHash)){
@@ -67,8 +71,6 @@ io.on('connection', (socket) => {
             }
         }
         console.log('no match, return false')
-        console.log(data.passHash)
-        console.log(config.users[data.user])
         callback(false)
     });
 
