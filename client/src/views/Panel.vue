@@ -1,6 +1,6 @@
 <template>
   <div class="background">
-    <Header @clickLogOut="onLogOutClick($event)" displayName="Jamulus Recordings" :show-log-out="true"/>
+    <Header @clickLogOut="onLogOutClick()" displayName="Jamulus Recordings" :show-log-out="true"/>
     <div class="mainbox">
       <div class="leftpanel">
         <div class="itemdiv">
@@ -61,10 +61,8 @@ export default {
     }
   },
   methods: {
-    onLogOutClick(event){
-      console.log('Clicked it')
-      console.log(event)
-
+    onLogOutClick(){
+      this.$router.push('/login')
     },
     onRecordToggle(event){
       console.log(event)
