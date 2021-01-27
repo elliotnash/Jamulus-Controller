@@ -13,7 +13,7 @@ const io = require('socket.io')(http, {
 const passwordHash = require('password-hash')
 const exitHook = require('exit-hook')
 
-const config = require('./config.json');
+const config = require('./config.example.json');
 // for (const [key, value] of Object.entries(config.users)) {
 //     config.users[key] = passwordHash.generate(value)
 // }
@@ -80,6 +80,11 @@ function readRecordState(){
             return;
         }
         let matches = stdout.match(stateRegex);
+
+        if (matches == null){
+            return;
+        }
+
         let lastMatch = matches[matches.length-1];
 
         //have the last state
