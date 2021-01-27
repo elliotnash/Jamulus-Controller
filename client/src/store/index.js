@@ -74,7 +74,7 @@ const store = new Vuex.Store({
 
 export default store
 
-let socket = io('http://192.168.0.196:3080');
+let socket = io(window.location.host);
 
 socket.on('RECORD_TOGGLE', (data) => {
   console.log('Record state updated')
@@ -84,4 +84,11 @@ socket.on('RECORD_TOGGLE', (data) => {
 socket.on('SYSTEM_INFO', (data) => {
   store.commit('setSystemInfo', data)
 });
-socket.emit()
+
+socket.on("connect", () => {
+  //attempt reauthenticate on connect, mainly for mobile browsers who suspend socket io sessions
+  store.dispatch('authenticate', store.state.credentials).then(() => {
+    console.log('socket reauthenticated')
+  }, () => {
+  })
+})

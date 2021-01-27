@@ -6,7 +6,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '*',
     name: 'Panel',
     component: () => import('@/views/Panel'),
     beforeEnter: (to, from, next) => {
@@ -27,11 +27,6 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue')
-  },
-  {
-    path: '*',
-    name: 'About',
-    component: () => import('@/views/About.vue')
   }
 ]
 

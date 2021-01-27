@@ -10,6 +10,7 @@ const io = require('socket.io')(http, {
     }
 });
 const passwordHash = require('password-hash')
+const exitHook = require('exit-hook')
 
 const config = require('./config.json');
 // for (const [key, value] of Object.entries(config.users)) {
@@ -77,14 +78,12 @@ io.on('connection', (socket) => {
             //user exists
             if (passwordHash.verify(config.users[data.user], data.passHash)){
                 //password match! return true
-                console.log('passwords match')
                 //add socket to authenticated sockets
                 addAuth()
                 callback(true)
                 return;
             }
         }
-        console.log('no match, return false')
         callback(false)
     });
 
@@ -99,4 +98,10 @@ io.on('connection', (socket) => {
             })
         }
     });
+})
+
+exitHook(() => {
+    console.log('Shutting down')
+    //make sure to stop recordings
+    changeState(false);
 })

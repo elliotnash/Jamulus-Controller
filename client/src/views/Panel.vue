@@ -80,13 +80,6 @@ export default {
 
   },
   mounted () {
-    // this.socket.on('RECORD_TOGGLE', (data) => {
-    //   console.log('Received state update')
-    //   this.recordingState = data.newState
-    // });
-    // this.socket.on('SYSTEM_INFO', (data) => {
-    //   this.systemInfo = data;
-    // });
   }
 }
 </script>
