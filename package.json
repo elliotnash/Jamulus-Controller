@@ -2,7 +2,7 @@
   "name": "jamuluscontroller-server",
   "version": "1.0.0",
   "description": "Backend for jamulus-controller webapp",
-  "main": "server.ts",
+  "main": "server.js",
   "author": "Elliot Nash",
   "dependencies": {
     "@types/node": "^14.14.22",
@@ -13,5 +13,9 @@
     "os-utils": "^0.0.14",
     "socket.io": "^3.1.0",
     "password-hash": "^1.2.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2"
   }
 }

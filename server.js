@@ -38,27 +38,39 @@ function updateInfo() {
             totalMem: totalMem,
             memUsed: Math.round(totalMem-os.freemem())
         }
-        io.emit('SYSTEM_INFO', systemInfo)
+        authenticatedSockets.forEach((socket) => {
+            socket.emit('SYSTEM_INFO', systemInfo)
+        })
     })
 }
 
-setInterval(updateInfo, 30000)
+setInterval(updateInfo, 1000)
 
 function changeState(newState){
     recordState = newState
 }
 
+let authenticatedSockets = new Set()
+
 io.on('connection', (socket) => {
-    socket.emit('RECORD_TOGGLE', {
-        newState: recordState
-    })
 
     socket.on('disconnect', () => {
+        //remove socket from authenticated users
+        authenticatedSockets.delete(socket);
     });
+
+    function addAuth(){
+        authenticatedSockets.add(socket)
+        //make sure to update recording state on authentication
+        socket.emit('RECORD_TOGGLE', {
+            newState: recordState
+        });
+    }
 
     socket.on('authenticate', (data, callback) => {
         if (data == null){
             callback(false)
+            return;
         }
 
         if (data.user in config.users){
@@ -66,6 +78,8 @@ io.on('connection', (socket) => {
             if (passwordHash.verify(config.users[data.user], data.passHash)){
                 //password match! return true
                 console.log('passwords match')
+                //add socket to authenticated sockets
+                addAuth()
                 callback(true)
                 return;
             }
@@ -75,9 +89,14 @@ io.on('connection', (socket) => {
     });
 
     socket.on('RECORD_TOGGLE', (data) => {
-        changeState(data.newState)
-        io.emit('RECORD_TOGGLE', {
-            newState: recordState
-        });
+
+        if (authenticatedSockets.has(socket)) {
+            changeState(data.newState)
+            authenticatedSockets.forEach((socket) => {
+                socket.emit('RECORD_TOGGLE', {
+                    newState: recordState
+                });
+            })
+        }
     });
 })
