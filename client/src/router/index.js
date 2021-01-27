@@ -11,10 +11,10 @@ const routes = [
     component: () => import('@/views/Panel'),
     beforeEnter: (to, from, next) => {
       //authentication to prevent loading panel when not logged in
-      if(store.state.authenticated === false) {
-        next();
+      if (store.state.authenticated){
+        next()
       } else {
-        next();
+        next('/login')
       }
     }
   },

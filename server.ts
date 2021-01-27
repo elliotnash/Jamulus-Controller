@@ -4,15 +4,17 @@ const os = require('os-utils');
 const express = require('express');
 const app = express()
 const http = require('http').createServer(app);
-let jwt = require("jsonwebtoken");
-const socketioJwt = require("socketio-jwt");
 const io = require('socket.io')(http, {
     cors: {
         origin: '*'
     }
 });
+const passwordHash = require('password-hash')
 
 const config = require('./config.json');
+// for (const [key, value] of Object.entries(config.users)) {
+//     config.users[key] = passwordHash.generate(value)
+// }
 
 let recordState = false;
 
@@ -40,25 +42,37 @@ function updateInfo() {
     })
 }
 
-setInterval(updateInfo, 3000)
+setInterval(updateInfo, 30000)
 
 function changeState(newState){
     recordState = newState
 }
 
 io.on('connection', (socket) => {
-    console.log('Client connected to the WebSocket');
     socket.emit('RECORD_TOGGLE', {
         newState: recordState
     })
 
     socket.on('disconnect', () => {
-        console.log('Client disconnected');
+    });
+
+    socket.on('authenticate', (data, callback) => {
+        if (data.user in config.users){
+            //user exists
+            if (passwordHash.verify(config.users[data.user], data.passHash)){
+                //password match! return true
+                console.log('passwords match')
+                callback(true)
+                return;
+            }
+        }
+        console.log('no match, return false')
+        console.log(data.passHash)
+        console.log(config.users[data.user])
+        callback(false)
     });
 
     socket.on('RECORD_TOGGLE', (data) => {
-        console.log("Record state toggled");
-        console.log(data.newState)
         changeState(data.newState)
         io.emit('RECORD_TOGGLE', {
             newState: recordState

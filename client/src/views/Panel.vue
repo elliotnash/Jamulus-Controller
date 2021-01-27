@@ -68,9 +68,7 @@ export default {
     },
     onRecordToggle(event){
       console.log(event)
-      this.socket.emit('RECORD_TOGGLE', {
-        newState: !this.$store.state.recordingState
-      })
+      this.$store.dispatch('emitRecordToggle', !this.$store.state.recordingState)
     }
   },
   created () {

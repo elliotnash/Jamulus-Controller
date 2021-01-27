@@ -12,6 +12,6 @@
     "nodemon": "^2.0.7",
     "os-utils": "^0.0.14",
     "socket.io": "^3.1.0",
-    "socketio-jwt": "^4.6.2"
+    "password-hash": "^1.2.2"
   }
 }

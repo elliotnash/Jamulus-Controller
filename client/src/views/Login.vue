@@ -40,6 +40,8 @@
 <script>
 
 import Header from "@/components/Header";
+import passwordHash from 'password-hash';
+
 export default {
   name: "Login",
   components: {
@@ -60,15 +62,24 @@ export default {
       }
     },
     login() {
-      if(this.input.username === "admin" && this.input.password === "pass") {
-        console.log('authentication successful')
-        this.$store.commit("setAuthentication", true)
+
+      this.$store.dispatch('authenticate', {
+        user: this.input.username,
+        passHash: passwordHash.generate(this.input.password)
+      }).then(() => {
         this.$router.push('/')
-      } else {
-        console.log("The username and / or password is incorrect");
-      }
+      })
+
     }
-  }
+
+      // if(this.input.username === "admin" && this.input.password === "pass") {
+      //   console.log('authentication successful')
+      //   this.$store.commit("setAuthentication", true)
+      //   this.$router.push('/')
+      // } else {
+      //   console.log("The username and / or password is incorrect");
+      // }
+    }
 }
 </script>
 

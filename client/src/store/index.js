@@ -7,7 +7,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     authenticated: false,
-    token: null,
+    passHash: null,
     recordingState: false,
     systemInfo: {}
   },
@@ -23,6 +23,24 @@ const store = new Vuex.Store({
     }
   },
   actions: {
+    emitRecordToggle(state, status) {
+      socket.emit('RECORD_TOGGLE', {
+        newState: status
+      })
+    },
+    authenticate(state, credentials){
+      return new Promise((resolve, reject) => {
+        socket.emit('authenticate', credentials, (allowed) => {
+          if(allowed) {
+            store.commit('setAuthentication', true);
+            resolve()
+          } else {
+            reject()
+          }
+        });
+      })
+
+    }
   },
   modules: {
   }
@@ -41,3 +59,4 @@ socket.on('RECORD_TOGGLE', (data) => {
 socket.on('SYSTEM_INFO', (data) => {
   store.commit('setSystemInfo', data)
 });
+socket.sock
