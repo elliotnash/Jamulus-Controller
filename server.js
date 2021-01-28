@@ -100,13 +100,19 @@ setInterval(updateInfo, 1000)
 
 let recordState = readRecordState();
 
-function changeState(newState){
+function changeState(newState, socket){
     if (recordState !== newState){
         //state was changed, time to fire recording change
 
         exec(`sudo systemctl kill -s SIGUSR2 ${config.systemdServiceName}`, {timeout: 20}, (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
+                console.log('Jamulus is most likely not running')
+                //emit error to socket who initiated if socket passed
+                //TODO make client handle socket NOT_RUNNING
+                if (socket) {
+                    socket.emit('NOT_RUNNING');
+                }
                 return;
             }
             if (stderr) {
@@ -197,7 +203,7 @@ io.on('connection', (socket) => {
     socket.on('RECORD_TOGGLE', (data) => {
 
         if (authenticatedSockets.has(socket)) {
-            changeState(data.newState)
+            changeState(data.newState, socket);
         }
     });
 
@@ -208,7 +214,8 @@ io.on('connection', (socket) => {
 })
 
 exitHook(() => {
-    console.log('Shutting down')
+    console.log('\nShutting down')
     //make sure to stop recordings
+    console.log('Stopping recording if running')
     changeState(false);
 })
