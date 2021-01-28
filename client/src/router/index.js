@@ -16,10 +16,10 @@ const routes = [
 
       store.dispatch('authenticate', store.state.credentials).then(() => {
         console.log('auth success')
-        next()
+        next();
       }, () => {
         console.log('auth fail')
-        next('/login')
+        next();//'/login'
       })
     }
   },

@@ -18,7 +18,7 @@ import VWave from 'v-wave'
 Vue.use(VWave, {
   color: '#2E3440',
   startingOpacity: 0.5,
-  easing: 'ease-out',
+  easing: 'ease-out'
 })
 
 export default {

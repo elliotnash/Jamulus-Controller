@@ -1,24 +1,25 @@
 <template lang="html">
   <div class="contentbox">
-    <div class="itemdiv">
-      <span class="boxtitle">JAMULUS STATUS: RUNNING</span>
-    </div>
-    <div class="itemdiv">
-      <span class="boxtitle">CLIENTS CONNECTED: 0</span>
-    </div>
-    <div class="itemdiv">
-      <span class="boxtitle">CPU USAGE: 0%</span>
-    </div>
-    <div class="itemdiv">
-      <span class="boxtitle">MEMORY USAGE: 0/2000MB</span>
-    </div>
+    <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.name"/>
+
+    <span v-if="$store.state.recordings == null" class="norecordings">No recordings, press start to start a recording</span>
+
     <div class="spacer"></div>
   </div>
 </template>
 
 <script>
+
+import RecordingItem from "@/components/RecordingItem";
+
 export default {
-name: "RecordingBox"
+  name: "RecordingBox",
+  components: {
+    RecordingItem
+  },
+  props: ['recordings'],
+  created() {
+  }
 }
 </script>
 
@@ -40,10 +41,17 @@ div
   &.spacer
     height: 2px
 
-span.boxtitle
-  margin: auto
-  font-family: ABeeZee, sans-serif
-  font-size: 15px
-  color: #ECEFF4
+span
+  &.boxtitle
+    margin: auto
+    font-family: ABeeZee, sans-serif
+    font-size: 15px
+    color: #ECEFF4
+  &.norecordings
+    margin: auto
+    padding: 20px
+    font-family: ABeeZee, sans-serif
+    font-size: 20px
+    color: #ECEFF4
 
 </style>

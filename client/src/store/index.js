@@ -10,7 +10,11 @@ const store = new Vuex.Store({
     authenticated: false,
     credentials: null,
     recordingState: false,
-    systemInfo: {}
+    systemInfo: {},
+    recordings: [
+      {name: 'cheese1', id: '0'},
+      {name: 'cheese2', id: '1'}
+    ]
   },
   mutations: {
     setAuthentication(state, status) {
@@ -35,6 +39,9 @@ const store = new Vuex.Store({
     },
     setCredentials(state, credentials){
       state.credentials = credentials;
+    },
+    setRecordings(state, data){
+      state.recordings = data;
     }
   },
   actions: {
@@ -81,6 +88,11 @@ socket.on('RECORD_TOGGLE', (data) => {
   store.commit('setRecordingState', data.newState)
   console.log(store.state.recordingState)
 });
+
+socket.on('RECORDINGS_UPDATE', (data) => {
+  store.commit('setRecordings', data);
+})
+
 socket.on('SYSTEM_INFO', (data) => {
   store.commit('setSystemInfo', data)
 });
