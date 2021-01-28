@@ -19,7 +19,7 @@ const routes = [
         next();
       }, () => {
         console.log('auth fail')
-        next();//'/login'
+        next('/login');
       })
     }
   },

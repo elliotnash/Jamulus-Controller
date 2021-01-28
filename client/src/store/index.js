@@ -11,10 +11,7 @@ const store = new Vuex.Store({
     credentials: null,
     recordingState: false,
     systemInfo: {},
-    recordings: [
-      {name: 'cheese1', id: '0'},
-      {name: 'cheese2', id: '1'}
-    ]
+    recordings: []
   },
   mutations: {
     setAuthentication(state, status) {
@@ -81,7 +78,8 @@ const store = new Vuex.Store({
 
 export default store
 
-let socket = io(window.location.host);
+//let socket = io(window.location.host);
+let socket = io('192.168.1.131:3080');
 
 socket.on('RECORD_TOGGLE', (data) => {
   console.log('Record state updated')
@@ -90,6 +88,8 @@ socket.on('RECORD_TOGGLE', (data) => {
 });
 
 socket.on('RECORDINGS_UPDATE', (data) => {
+  console.log('haa')
+  console.log(data)
   store.commit('setRecordings', data);
 })
 

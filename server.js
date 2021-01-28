@@ -12,13 +12,12 @@ const io = require('socket.io')(http, {
 });
 const passwordHash = require('password-hash')
 const exitHook = require('exit-hook')
+const fs = require('fs');
 
 const config = require('./config.example.json');
 // for (const [key, value] of Object.entries(config.users)) {
 //     config.users[key] = passwordHash.generate(value)
 // }
-
-let recordState = false;
 
 
 app.use(express.static(path.join(__dirname, 'build')));
@@ -73,8 +72,33 @@ function readRecordState(){
 
 }
 
+function readDirectories(){
+    return new Promise(((resolve, reject) => {
+        fs.readdir(config.recordingDirectory, (err, files) => {
+            if (err != null){
+                console.log(`There was an error reading the recording directory: ${err}`)
+                reject(err);
+                return;
+            }
+
+            //clear array
+            recordings = []
+
+            files.forEach(file => {
+                recordings.push({name: file});
+            })
+            resolve();
+        })
+    }));
+
+}
+
+readDirectories()
+
 setInterval(updateInfo, 1000)
-setInterval(readRecordState, 900)
+//setInterval(readRecordState, 900)
+
+let recordState = readRecordState();
 
 function changeState(newState){
     if (recordState !== newState){
@@ -99,6 +123,16 @@ function changeState(newState){
             //sync real state now - seems like time with least interference
             recordState = readRecordState();
 
+            if (!newState){
+                //this means recording was just stopped, we'll need to update our directory index
+                readDirectories().then(() => {
+                    //now push files to all
+                    updateRecordingList();
+                });
+                //
+
+            }
+
         });
 
     } else {
@@ -108,11 +142,19 @@ function changeState(newState){
 
 let authenticatedSockets = new Set()
 
+let recordings = []
+
 function updateAuthClientState(){
     authenticatedSockets.forEach((socket) => {
         socket.emit('RECORD_TOGGLE', {
             newState: recordState
         });
+    })
+}
+
+function updateRecordingList(){
+    authenticatedSockets.forEach((socket) => {
+        socket.emit('RECORDINGS_UPDATE', recordings)
     })
 }
 
@@ -129,6 +171,8 @@ io.on('connection', (socket) => {
         socket.emit('RECORD_TOGGLE', {
             newState: recordState
         });
+        //and recording list
+        socket.emit('RECORDINGS_UPDATE', recordings)
     }
 
     socket.on('authenticate', (data, callback) => {
@@ -156,6 +200,11 @@ io.on('connection', (socket) => {
             changeState(data.newState)
         }
     });
+
+    socket.on('RECORDINGS_UPDATE', (data) => {
+
+    });
+
 })
 
 exitHook(() => {

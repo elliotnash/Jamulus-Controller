@@ -1,0 +1,8 @@
+{
+  "port" : "3080",
+  "users": {
+    "user": "password"
+  },
+  "systemdServiceName": "jamulus",
+  "recordingDirectory": "/home/jamulus/Jamulus-Recordings"
+}

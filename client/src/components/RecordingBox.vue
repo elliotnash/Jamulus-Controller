@@ -2,7 +2,7 @@
   <div class="contentbox">
     <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.name"/>
 
-    <span v-if="$store.state.recordings == null" class="norecordings">No recordings, press start to start a recording</span>
+    <span v-if="$store.state.recordings[0] == null" class="norecordings">No recordings, press start to start a recording</span>
 
     <div class="spacer"></div>
   </div>
