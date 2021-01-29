@@ -4,5 +4,6 @@
     "user": "password"
   },
   "systemdServiceName": "jamulus",
-  "recordingDirectory": "/home/jamulus/Jamulus-Recordings"
+  "recordingDirectory": "/home/jamulus/Jamulus-Recordings",
+  "downloadExpireTime": "10"
 }

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import io from 'socket.io-client'
+const FileSaver = require('file-saver');
 
 Vue.use(Vuex)
 Vue.use(require('vue-cookies'))
@@ -69,6 +70,18 @@ const store = new Vuex.Store({
         });
       })
 
+    },
+    downloadFile(state, file){
+      return new Promise((resolve, reject) => {
+        socket.emit('DOWNLOAD_FILE', file, (uri) => {
+          //first callback is on receive
+          console.log('server received download request');
+
+          FileSaver.saveAs(uri, file+'.zip');
+
+        })
+        resolve();
+      })
     }
   },
   modules: {
@@ -78,8 +91,9 @@ const store = new Vuex.Store({
 
 export default store
 
-//let socket = io(window.location.host);
-let socket = io('192.168.1.131:3080');
+let host = window.location.host;
+//let host = '192.168.1.131:3080'
+let socket = io(host);
 
 socket.on('RECORD_TOGGLE', (data) => {
   console.log('Record state updated')

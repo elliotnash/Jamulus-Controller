@@ -1,7 +1,7 @@
 const path = require('path');
 const os = require('os-utils');
 const { exec } = require("child_process");
-
+const nanoid = require('nanoid')
 const express = require('express');
 const app = express()
 const http = require('http').createServer(app);
@@ -10,6 +10,7 @@ const io = require('socket.io')(http, {
         origin: '*'
     }
 });
+const JSZip = require("jszip")
 const passwordHash = require('password-hash')
 const exitHook = require('exit-hook')
 const fs = require('fs');
@@ -21,6 +22,20 @@ const config = require('./config.example.json');
 
 
 app.use(express.static(path.join(__dirname, 'build')));
+
+
+app.get('/download', function(req, res, next) {
+    // Get the download sid
+    let token = req.query.token;
+  
+    // Get the download file path
+    getDownload(token).then((path) => {
+        res.sendFile(path);
+    }).catch(() => {
+        res.send('download has expired')
+    })
+});
+
 
 app.get('/*', (req,res) => {
     res.sendFile(path.join(__dirname, 'build/index.html'));
@@ -91,6 +106,10 @@ function readDirectories(){
         })
     }));
 
+}
+
+function zip(path) {
+    
 }
 
 readDirectories()
@@ -211,7 +230,63 @@ io.on('connection', (socket) => {
 
     });
 
+    socket.on('DOWNLOAD_FILE', (data, callback) => {
+        
+        if (authenticatedSockets.has(socket)) {
+            console.log('server received request');
+            
+            createDownload('/home/elliot/Downloads/test.zip').then((token) => {
+                callback(`/download?token=${token}`)
+            });
+
+            
+        }
+    })
+
+
+
 })
+
+let downloadTokens = {}
+
+function createDownload(filePath) {
+  
+    return new Promise((resolve, reject) => {
+        // Check the existence of the file
+        if (!fs.existsSync(filePath)) return;
+    
+        // Generate the download sid (session id)
+        let downloadToken = nanoid.nanoid(48);
+        
+        downloadTokens[downloadToken] = {
+            path: filePath,
+            created: Date.now()
+        }
+
+        //TODO zip download and set that as path
+
+        resolve(downloadToken);
+
+    });
+}
+
+function getDownload(token){
+    return new Promise((resolve, reject) => {
+        if (token in downloadTokens){
+            let download = downloadTokens[token];
+            console.log('token exists');
+            if (download.created > (Date.now() - (config.downloadExpireTime*60000))){
+                console.log('token is valid');
+                return resolve(download.path);
+            }
+        }
+
+        console.log('token invalid, deleting');
+        delete downloadTokens[token];
+        reject();
+
+    })
+}
 
 exitHook(() => {
     console.log('\nShutting down')

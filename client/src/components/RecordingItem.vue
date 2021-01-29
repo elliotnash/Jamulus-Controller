@@ -21,7 +21,8 @@ export default {
       event.stopPropagation();
     },
     divClick() {
-      console.log('div clicked')
+      console.log('div clicked, downloading file')
+      this.$store.dispatch('downloadFile', this.recording.name);
     }
   }
 }
