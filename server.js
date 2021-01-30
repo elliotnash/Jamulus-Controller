@@ -10,7 +10,7 @@ const io = require('socket.io')(http, {
         origin: '*'
     }
 });
-const JSZip = require("jszip")
+const zipper = require('zip-a-folder');
 const passwordHash = require('password-hash')
 const exitHook = require('exit-hook')
 const fs = require('fs');
@@ -87,7 +87,13 @@ function readRecordState(){
 
 }
 
-function readDirectories(){
+function getFirstTime(stats){
+    const times = [stats.birthtime, stats.mtime, stats.ctime]
+    const min = times.reduce((first, second) => first < second ? first : second )
+    return(min);
+}
+
+function readDirectories(deleteNonDir){
     return new Promise(((resolve, reject) => {
         fs.readdir(config.recordingDirectory, (err, files) => {
             if (err != null){
@@ -100,7 +106,16 @@ function readDirectories(){
             recordings = []
 
             files.forEach(file => {
-                recordings.push({name: file});
+                //only include folders in index
+                const stats = fs.statSync(config.recordingDirectory+"/"+file);
+                if (stats.isDirectory()){
+                    recordings.push({name: file, created: getFirstTime(stats)});
+                } else if (deleteNonDir){
+                    //then we should delete all other files
+                    fs.unlink(config.recordingDirectory+"/"+file, (err) => {
+                        if (err) console.log(err);
+                    });
+                }
             })
             resolve();
         })
@@ -108,14 +123,9 @@ function readDirectories(){
 
 }
 
-function zip(path) {
-    
-}
-
-readDirectories()
+readDirectories(true);
 
 setInterval(updateInfo, 1000)
-//setInterval(readRecordState, 900)
 
 let recordState = readRecordState();
 
@@ -230,13 +240,17 @@ io.on('connection', (socket) => {
 
     });
 
-    socket.on('DOWNLOAD_FILE', (data, callback) => {
+    socket.on('DOWNLOAD_FILE', (file, callback) => {
         
         if (authenticatedSockets.has(socket)) {
-            console.log('server received request');
-            
-            createDownload('/home/elliot/Downloads/test.zip').then((token) => {
-                callback(`/download?token=${token}`)
+            console.log(socket.handshake.address+" is downloading a file");
+
+            createDownload(config.recordingDirectory+"/"+file).then((token) => {
+                //zip-a-file sometimes calls the callback before zip is done,
+                //need to set small timeout before sending ready callback
+            setTimeout(() => {
+                callback(`/download?token=${token}`);
+            }, 250);
             });
 
             
@@ -247,6 +261,21 @@ io.on('connection', (socket) => {
 
 })
 
+
+function zip(path) {
+    return new Promise((resolve, reject) => {
+
+        const zippath = path+".zip";
+
+        if (!fs.existsSync(zippath)) resolve(zippath);
+
+        zipper.zipFolder(path, zippath, (err) => {
+            err ? reject(err) : resolve(zippath);
+        })
+    });
+}
+
+
 let downloadTokens = {}
 
 function createDownload(filePath) {
@@ -255,17 +284,20 @@ function createDownload(filePath) {
         // Check the existence of the file
         if (!fs.existsSync(filePath)) return;
     
-        // Generate the download sid (session id)
-        let downloadToken = nanoid.nanoid(48);
-        
-        downloadTokens[downloadToken] = {
-            path: filePath,
-            created: Date.now()
-        }
+        zip(filePath).then((zippath) => {
+                // Generate the download token
+            let downloadToken = nanoid.nanoid(48);
+            
+            downloadTokens[downloadToken] = {
+                path: filePath+".zip",
+                created: Date.now()
+            }
 
-        //TODO zip download and set that as path
+            resolve(downloadToken);
 
-        resolve(downloadToken);
+        }).catch((err) => {
+            console.log(err);
+        })
 
     });
 }
@@ -274,14 +306,13 @@ function getDownload(token){
     return new Promise((resolve, reject) => {
         if (token in downloadTokens){
             let download = downloadTokens[token];
-            console.log('token exists');
+            
             if (download.created > (Date.now() - (config.downloadExpireTime*60000))){
-                console.log('token is valid');
+                ;
                 return resolve(download.path);
             }
         }
 
-        console.log('token invalid, deleting');
         delete downloadTokens[token];
         reject();
 
