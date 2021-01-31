@@ -115,6 +115,11 @@ function readDirectories(deleteNonDir){
                     });
                 }
             })
+            recordings = recordings.sort(function(a, b) {
+                var x = a.created; var y = b.created;
+                return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+            });
+            updateRecordingList();
             resolve();
         })
     }));
@@ -156,8 +161,6 @@ function changeState(newState, socket){
             if (!newState){
                 //this means recording was just stopped, we'll need to update our directory index
                 readDirectories().then(() => {
-                    //now push files to all
-                    updateRecordingList();
                 });
                 //
 
@@ -184,6 +187,7 @@ function updateAuthClientState(){
 
 function updateRecordingList(){
     authenticatedSockets.forEach((socket) => {
+        console.log('')
         socket.emit('RECORDINGS_UPDATE', recordings)
     })
 }
@@ -245,9 +249,30 @@ io.on('connection', (socket) => {
                 //need to set small timeout before sending ready callback
             setTimeout(() => {
                 callback(`/download?token=${token}`);
-            }, 250);
+            }, 500);
             });
 
+            
+        }
+    })
+
+    socket.on('RENAME_FILE', (data) => {
+        
+        if (authenticatedSockets.has(socket)) {
+
+            const oldpath = config.recordingDirectory+"/"+data.oldname
+            const newpath = config.recordingDirectory+"/"+data.newname
+
+
+            if (!fs.existsSync(oldpath)) return;
+
+            fs.rename(oldpath, newpath, function(err) {
+                if ( err )
+                    console.log('ERROR: ' + err);
+                else{
+                    readDirectories();
+                }
+            });
             
         }
     })

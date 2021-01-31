@@ -8,7 +8,7 @@
         <font-awesome-icon class="icons" icon="ellipsis-h" />
       </div>
     </div>
-    <FileDialog @close="showDialog = false" v-if="showDialog" />
+    <FileDialog :recording="recording" @close="showDialog = false" v-if="showDialog" />
   </div>
 </template>
 
@@ -35,7 +35,6 @@ export default {
 
       this.showDialog = true;
 
-      //this.$store.dispatch('downloadFile', this.recording.name);
     }
   }
 }

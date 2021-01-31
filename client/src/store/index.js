@@ -88,6 +88,18 @@ const store = new Vuex.Store({
         })
         resolve();
       })
+    },
+    renameFile(state, data){
+      return new Promise((resolve, reject) => {
+        socket.emit('RENAME_FILE', data);
+        resolve();
+      })
+    },
+    deleteFile(state, file){
+      return new Promise((resolve, reject) => {
+        socket.emit('DELETE_FILE', file);
+        resolve();
+      })
     }
   },
   modules: {
@@ -97,8 +109,8 @@ const store = new Vuex.Store({
 
 export default store
 
-let host = window.location.host;
-//let host = '192.168.1.131:3080'
+//let host = window.location.host;
+let host = '192.168.1.131:3080'
 let socket = io(host);
 
 socket.on('RECORD_TOGGLE', (data) => {

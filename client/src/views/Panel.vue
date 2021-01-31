@@ -65,7 +65,6 @@ export default {
   methods: {
     onLogOutClick(){
       this.$store.commit('setAuthentication', false);
-      this.$store.commit('')
       this.$router.push('/login')
     },
     onRecordToggle(event){
