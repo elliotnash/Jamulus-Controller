@@ -286,6 +286,8 @@ io.on('connection', (socket) => {
 
             if (!fs.existsSync(filepath)) return;
             
+            console.log('deleting '+filepath)
+
             fs.rmdir(filepath, {recursive: true}, (err) => {
                 if ( err )
                     console.log('ERROR: ' + err);
