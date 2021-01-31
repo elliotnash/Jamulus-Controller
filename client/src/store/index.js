@@ -12,7 +12,10 @@ const store = new Vuex.Store({
     credentials: null,
     recordingState: false,
     systemInfo: {},
-    recordings: []
+    recordings: [],
+    dialogs: {
+      file: true
+    }
   },
   mutations: {
     setAuthentication(state, status) {
@@ -40,6 +43,9 @@ const store = new Vuex.Store({
     },
     setRecordings(state, data){
       state.recordings = data;
+    },
+    setDialog(state, dialog, status) {
+      state.dialogs[dialog] = status;
     }
   },
   actions: {
@@ -91,8 +97,8 @@ const store = new Vuex.Store({
 
 export default store
 
-let host = window.location.host;
-//let host = '192.168.1.131:3080'
+//let host = window.location.host;
+let host = '192.168.1.131:3080'
 let socket = io(host);
 
 socket.on('RECORD_TOGGLE', (data) => {

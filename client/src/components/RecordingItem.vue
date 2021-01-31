@@ -1,28 +1,41 @@
 <template>
-  <div class="elementdiv" v-wave @click="divClick" >
-    <div class="textdiv">
-      <span class="boxtitle" >{{ recording.name }}</span>
+  <div>
+    <div class="elementdiv" v-wave @click="close()" >
+      <div class="textdiv">
+        <span class="boxtitle" >{{ recording.name }}</span>
+      </div>
+      <div v-wave class="rightdiv">
+        <font-awesome-icon class="icons" icon="ellipsis-h" />
+      </div>
     </div>
-    <div v-wave @click="moreClick($event)" class="rightdiv">
-      <font-awesome-icon class="icons" icon="ellipsis-h" />
-    </div>
+    <FileDialog @close="showDialog = false" v-if="showDialog" />
   </div>
 </template>
 
 <script>
+
+import FileDialog from './dialogs/FileDialog'
+
 export default {
 
   name: "RecordingItem",
+  components: {
+    FileDialog
+  },
   props: {
     recording: {}
   },
+  data(){
+      return {
+        showDialog: false
+      }
+  },
   methods: {
-    moreClick(event) {
-      event.stopPropagation();
-    },
-    divClick() {
-      console.log('div clicked, downloading file')
-      this.$store.dispatch('downloadFile', this.recording.name);
+    close() {
+
+      this.showDialog = true;
+
+      //this.$store.dispatch('downloadFile', this.recording.name);
     }
   }
 }

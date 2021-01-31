@@ -15,11 +15,9 @@ const passwordHash = require('password-hash')
 const exitHook = require('exit-hook')
 const fs = require('fs');
 
-const config = require('./config.example.json');
-// for (const [key, value] of Object.entries(config.users)) {
-//     config.users[key] = passwordHash.generate(value)
-// }
+const config = require('./config.json');
 
+//TODO add resync button to sync recording state
 
 app.use(express.static(path.join(__dirname, 'build')));
 
@@ -133,7 +131,7 @@ function changeState(newState, socket){
     if (recordState !== newState){
         //state was changed, time to fire recording change
 
-        exec(`sudo systemctl kill -s SIGUSR2 ${config.systemdServiceName}`, {timeout: 20}, (error, stdout, stderr) => {
+        exec(`sudo systemctl kill -s SIGUSR2 ${config.systemdServiceName}`, {timeout: 200}, (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 console.log('Jamulus is most likely not running')
@@ -154,9 +152,6 @@ function changeState(newState, socket){
 
             //update all clients
             updateAuthClientState();
-
-            //sync real state now - seems like time with least interference
-            recordState = readRecordState();
 
             if (!newState){
                 //this means recording was just stopped, we'll need to update our directory index

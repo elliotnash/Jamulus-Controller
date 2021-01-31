@@ -42,6 +42,7 @@ import RecordingBox from "@/components/RecordingBox";
 
 import Vue from 'vue'
 import VWave from 'v-wave'
+import FileDialog from '../components/dialogs/FileDialog.vue';
 Vue.use(VWave, {
   color: '#2E3440',
   startingOpacity: 0.5,
@@ -54,7 +55,8 @@ export default {
     RecordingBox,
     InfoBox,
     ControlBox,
-    Header
+    Header,
+    FileDialog
   },
   data () {
     return {
