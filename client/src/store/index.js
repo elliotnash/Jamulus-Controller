@@ -97,8 +97,8 @@ const store = new Vuex.Store({
 
 export default store
 
-//let host = window.location.host;
-let host = '192.168.1.131:3080'
+let host = window.location.host;
+//let host = '192.168.1.131:3080'
 let socket = io(host);
 
 socket.on('RECORD_TOGGLE', (data) => {

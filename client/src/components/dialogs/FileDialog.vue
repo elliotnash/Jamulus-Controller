@@ -1,7 +1,7 @@
 <template lang="html">
   <div>
 
-    <transition name="shaderfade">
+    <transition name="shaderfade" mode="in-out">
       <div v-if="show" class="shader"/>
     </transition>
 
@@ -37,7 +37,7 @@ export default {
       //wait for animation to set dialog as closed
       setTimeout(() => {
         this.$emit('close')
-      }, 200);
+      }, 300);
       
 
     }
@@ -64,7 +64,7 @@ div
 
   &.shader
     @extend .fullpage
-    background: #00000060
+    background: #00000080
 
   &.dialogdiv
     margin: auto
@@ -92,24 +92,32 @@ div
     justify-content: left
     align-items: center
 
-.shaderfade-enter-active, .shaderfade-leave-active
-  opacity: 100%
-  transition: opacity 0.2s ease-in-out
+.shaderfade-enter-active
+  animation: fade-in 0.3s
 
-.shaderfade-enter, .shaderfade-leave-to
-  opacity: 0
+.shaderfade-leave-active
+  animation: fade-in 0.3s reverse
 
-.scale-enter-active, .scale-leave-active
-  opacity: 100%
-  transform: scale(1)
-  transition: all 0.1s ease-in-out
+.scale-enter-active
+  animation: bounce-in 0.3s
 
-.scale-enter, .scale-leave-to
-  opacity: 50%
-  transform: scale(0.5)
-  width: 0
-  height: 0
+.scale-leave-active
+  animation: bounce-in 0.3s reverse;
 
+@keyframes bounce-in 
+  0%
+    transform: scale(0)
+  70%
+    transform: scale(1.1)
+  100% 
+    transform: scale(1)
+
+@keyframes fade-in
+  from 
+    opacity: 0
+  to 
+    opacity: 1
+  
 
 
 </style>
