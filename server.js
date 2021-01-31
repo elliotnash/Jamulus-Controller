@@ -277,6 +277,26 @@ io.on('connection', (socket) => {
         }
     })
 
+    socket.on('DELETE_FILE', (file) => {
+        
+        if (authenticatedSockets.has(socket)) {
+
+            const filepath = config.recordingDirectory+"/"+file
+
+
+            if (!fs.existsSync(filepath)) return;
+            
+            fs.rmdir(filepath, {recursive: true}, (err) => {
+                if ( err )
+                    console.log('ERROR: ' + err);
+                else{
+                    readDirectories();
+                }
+            });
+            
+        }
+    })
+
 
 
 })
