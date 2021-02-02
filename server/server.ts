@@ -17,12 +17,12 @@ import exitHook from 'exit-hook';
 import fs from 'fs';
 
 
-import config from './config.json';
+const config = require('../config.json');
 const users: any = config.users
 
 //TODO add resync button to sync recording state
 
-app.use(express.static(path.join(__dirname, '../../build')));
+app.use(express.static(path.join(__dirname, './client')));
 
 
 app.get('/download', function(req, res, next) {
@@ -39,7 +39,7 @@ app.get('/download', function(req, res, next) {
 
 
 app.get('/*', (req,res) => {
-    res.sendFile(path.join(__dirname, '../../build/index.html'));
+    res.sendFile(path.join(__dirname, './client/index.html'));
 });
 
 server.listen(config.port, () => {
