@@ -1,3 +1,5 @@
+import { Socket } from "dgram";
+
 const path = require('path');
 const os = require('os-utils');
 const { exec } = require("child_process");
@@ -5,11 +7,7 @@ const nanoid = require('nanoid')
 const express = require('express');
 const app = express()
 const http = require('http').createServer(app);
-const io = require('socket.io')(http, {
-    cors: {
-        origin: '*'
-    }
-});
+import * as io from 'socket.io'
 const zipper = require('zip-a-folder');
 const passwordHash = require('password-hash')
 const exitHook = require('exit-hook')
@@ -52,48 +50,52 @@ function updateInfo() {
             totalMem: totalMem,
             memUsed: Math.round(totalMem-os.freemem())
         }
-        authenticatedSockets.forEach((socket) => {
+        authenticatedSockets.forEach((socket: Socket) => {
             socket.emit('SYSTEM_INFO', systemInfo)
         })
     })
 }
 
 const stateRegex = /(Recording state )(enabled|disabled)/gm;
-function readRecordState(){
+function readRecordState(): Boolean {
 
-    exec(`journalctl -u ${config.systemdServiceName} --no-pager -q -n 25`, (error, stdout, stderr) => {
+    let recordState = false;
+
+    exec(`journalctl -u ${config.systemdServiceName} --no-pager -q -n 25`, (error: Error, stdout: String, stderr: String) => {
         if (error) {
             console.log(`error: ${error.message}`);
-            return false;
+            return;
         }
         if (stderr) {
             console.log(`stderr: ${stderr}`);
-            return false;
+            return;
         }
         let matches = stdout.match(stateRegex);
 
         if (matches == null){
-            return false;
+            return;
         }
 
         let lastMatch = matches[matches.length-1];
 
         //have the last state
-        return lastMatch === 'Recording state enabled';
+        recordState = lastMatch === 'Recording state enabled';
 
     });
 
+    return recordState;
+
 }
 
-function getFirstTime(stats){
+function getFirstTime(stats: {birthtime: string, mtime: string, ctime: string}){
     const times = [stats.birthtime, stats.mtime, stats.ctime]
     const min = times.reduce((first, second) => first < second ? first : second )
     return(min);
 }
 
-function readDirectories(deleteNonDir){
+function readDirectories(deleteNonDir: Boolean){
     return new Promise(((resolve, reject) => {
-        fs.readdir(config.recordingDirectory, (err, files) => {
+        fs.readdir(config.recordingDirectory, (err: Error, files: []) => {
             if (err != null){
                 console.log(`There was an error reading the recording directory: ${err}`)
                 reject(err);
@@ -120,7 +122,7 @@ function readDirectories(deleteNonDir){
                 return ((x > y) ? -1 : ((x < y) ? 1 : 0));
             });
             updateRecordingList();
-            resolve();
+            resolve(recordings);
         })
     }));
 
@@ -130,19 +132,19 @@ readDirectories(true);
 
 setInterval(updateInfo, 1000)
 
-let recordState = readRecordState();
+let recordState: Boolean = readRecordState();
 
-function changeState(newState, socket){
+function changeState(newState: Boolean, socket: Socket){
     if (recordState !== newState){
         //state was changed, time to fire recording change
 
-        exec(`sudo systemctl kill -s SIGUSR2 ${config.systemdServiceName}`, {timeout: 200}, (error, stdout, stderr) => {
+        exec(`sudo systemctl kill -s SIGUSR2 ${config.systemdServiceName}`, {timeout: 200}, (error: Error, stdout: string, stderr: string) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 console.log('Jamulus is most likely not running')
                 //emit error to socket who initiated if socket passed
                 //TODO make client handle socket NOT_RUNNING
-                if (socket) {
+                if (socket != null) {
                     socket.emit('NOT_RUNNING');
                 }
                 return;
@@ -160,7 +162,7 @@ function changeState(newState, socket){
 
             if (!newState){
                 //this means recording was just stopped, we'll need to update our directory index
-                readDirectories().then(() => {
+                readDirectories(false).then(() => {
                 });
                 //
 
@@ -173,12 +175,12 @@ function changeState(newState, socket){
     }
 }
 
-let authenticatedSockets = new Set()
+let authenticatedSockets = new Set([Socket])
 
 let recordings = []
 
 function updateAuthClientState(){
-    authenticatedSockets.forEach((socket) => {
+    authenticatedSockets.forEach(function(socket: any){
         socket.emit('RECORD_TOGGLE', {
             newState: recordState
         });
@@ -186,13 +188,14 @@ function updateAuthClientState(){
 }
 
 function updateRecordingList(){
-    authenticatedSockets.forEach((socket) => {
-        console.log('')
+    authenticatedSockets.forEach((socket: any) => {
         socket.emit('RECORDINGS_UPDATE', recordings)
     })
 }
 
-io.on('connection', (socket) => {
+io.
+
+io.Server.on('connection', (socket: any) => {
 
     socket.on('disconnect', () => {
         //remove socket from authenticated users
@@ -209,7 +212,7 @@ io.on('connection', (socket) => {
         socket.emit('RECORDINGS_UPDATE', recordings)
     }
 
-    socket.on('authenticate', (data, callback) => {
+    socket.on('authenticate', (data: {user: string, passHash: string}, callback) => {
         if (data == null){
             callback(false)
             return;
@@ -270,7 +273,7 @@ io.on('connection', (socket) => {
                 if ( err )
                     console.log('ERROR: ' + err);
                 else{
-                    readDirectories();
+                    readDirectories(false);
                 }
             });
             
@@ -292,7 +295,7 @@ io.on('connection', (socket) => {
                 if ( err )
                     console.log('ERROR: ' + err);
                 else{
-                    readDirectories();
+                    readDirectories(false);
                 }
             });
             
@@ -304,7 +307,7 @@ io.on('connection', (socket) => {
 })
 
 
-function zip(path) {
+function zip(path: string) {
     return new Promise((resolve, reject) => {
 
         const zippath = path+".zip";
@@ -320,7 +323,7 @@ function zip(path) {
 
 let downloadTokens = {}
 
-function createDownload(filePath) {
+function createDownload(filePath: string) {
   
     return new Promise((resolve, reject) => {
         // Check the existence of the file
@@ -344,7 +347,7 @@ function createDownload(filePath) {
     });
 }
 
-function getDownload(token){
+function getDownload(token: string){
     return new Promise((resolve, reject) => {
         if (token in downloadTokens){
             let download = downloadTokens[token];
@@ -365,5 +368,5 @@ exitHook(() => {
     console.log('\nShutting down')
     //make sure to stop recordings
     console.log('Stopping recording if running')
-    changeState(false);
+    changeState(false, null);
 })
