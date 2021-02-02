@@ -5,5 +5,5 @@
   },
   "systemdServiceName": "jamulus",
   "recordingDirectory": "/home/jamulus/Jamulus-Recordings",
-  "downloadExpireTime": "10"
+  "downloadExpireTime": 10
 }

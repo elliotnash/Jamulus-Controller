@@ -1,31 +1,36 @@
-import { Socket } from "dgram";
-
-const path = require('path');
-const os = require('os-utils');
-const { exec } = require("child_process");
-const nanoid = require('nanoid')
-const express = require('express');
+import path from 'path';
+import os from 'os-utils';
+import { exec } from "child_process";
+import nanoid from 'nanoid';
+import express from 'express';
 const app = express()
-const http = require('http').createServer(app);
-import * as io from 'socket.io'
-const zipper = require('zip-a-folder');
-const passwordHash = require('password-hash')
-const exitHook = require('exit-hook')
-const fs = require('fs');
+const server = require('http').createServer(app);
+import * as SocketIO from 'socket.io'
+const io = require('socket.io')(server, {
+    cors: {
+        origin: '*'
+    }
+});
+import zipper from 'zip-a-folder';
+import passwordHash from 'password-hash';
+import exitHook from 'exit-hook';
+import fs from 'fs';
 
-const config = require('./config.json');
+
+import config from './config.json';
+const users: any = config.users
 
 //TODO add resync button to sync recording state
 
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, '../../build')));
 
 
 app.get('/download', function(req, res, next) {
     // Get the download sid
-    let token = req.query.token;
+    let token = req.query.token as string;
   
     // Get the download file path
-    getDownload(token).then((path) => {
+    getDownload(token).then((path: string) => {
         res.sendFile(path);
     }).catch(() => {
         res.send('download has expired')
@@ -34,11 +39,11 @@ app.get('/download', function(req, res, next) {
 
 
 app.get('/*', (req,res) => {
-    res.sendFile(path.join(__dirname, 'build/index.html'));
+    res.sendFile(path.join(__dirname, '../../build/index.html'));
 });
 
-http.listen(config.port, () => {
-    const port = http.address().port;
+server.listen(config.port, () => {
+    const port = server.address().port;
     console.log('Server listening at http://localhost:%s', port)
 });
 
@@ -50,7 +55,7 @@ function updateInfo() {
             totalMem: totalMem,
             memUsed: Math.round(totalMem-os.freemem())
         }
-        authenticatedSockets.forEach((socket: Socket) => {
+        authenticatedSockets.forEach((socket: SocketIO.Socket) => {
             socket.emit('SYSTEM_INFO', systemInfo)
         })
     })
@@ -61,7 +66,7 @@ function readRecordState(): Boolean {
 
     let recordState = false;
 
-    exec(`journalctl -u ${config.systemdServiceName} --no-pager -q -n 25`, (error: Error, stdout: String, stderr: String) => {
+    exec(`journalctl -u ${config.systemdServiceName} --no-pager -q -n 25`, (error, stdout, stderr) => {
         if (error) {
             console.log(`error: ${error.message}`);
             return;
@@ -87,15 +92,15 @@ function readRecordState(): Boolean {
 
 }
 
-function getFirstTime(stats: {birthtime: string, mtime: string, ctime: string}){
+function getFirstTime(stats: fs.Stats){
     const times = [stats.birthtime, stats.mtime, stats.ctime]
     const min = times.reduce((first, second) => first < second ? first : second )
     return(min);
 }
 
-function readDirectories(deleteNonDir: Boolean){
+function readDirectories(deleteNonDir?: Boolean){
     return new Promise(((resolve, reject) => {
-        fs.readdir(config.recordingDirectory, (err: Error, files: []) => {
+        fs.readdir(config.recordingDirectory, (err, files) => {
             if (err != null){
                 console.log(`There was an error reading the recording directory: ${err}`)
                 reject(err);
@@ -134,17 +139,17 @@ setInterval(updateInfo, 1000)
 
 let recordState: Boolean = readRecordState();
 
-function changeState(newState: Boolean, socket: Socket){
+function changeState(newState: Boolean, socket?: SocketIO.Socket){
     if (recordState !== newState){
         //state was changed, time to fire recording change
 
-        exec(`sudo systemctl kill -s SIGUSR2 ${config.systemdServiceName}`, {timeout: 200}, (error: Error, stdout: string, stderr: string) => {
+        exec(`sudo systemctl kill -s SIGUSR2 ${config.systemdServiceName}`, {timeout: 200}, (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 console.log('Jamulus is most likely not running')
                 //emit error to socket who initiated if socket passed
                 //TODO make client handle socket NOT_RUNNING
-                if (socket != null) {
+                if (socket) {
                     socket.emit('NOT_RUNNING');
                 }
                 return;
@@ -175,9 +180,9 @@ function changeState(newState: Boolean, socket: Socket){
     }
 }
 
-let authenticatedSockets = new Set([Socket])
+let authenticatedSockets: Set<SocketIO.Socket> = new Set()
 
-let recordings = []
+let recordings: {name: string, created: Date}[] = []
 
 function updateAuthClientState(){
     authenticatedSockets.forEach(function(socket: any){
@@ -193,9 +198,7 @@ function updateRecordingList(){
     })
 }
 
-io.
-
-io.Server.on('connection', (socket: any) => {
+io.on('connection', (socket: any) => {
 
     socket.on('disconnect', () => {
         //remove socket from authenticated users
@@ -212,7 +215,7 @@ io.Server.on('connection', (socket: any) => {
         socket.emit('RECORDINGS_UPDATE', recordings)
     }
 
-    socket.on('authenticate', (data: {user: string, passHash: string}, callback) => {
+    socket.on('authenticate', (data: {user: string, passHash: string}, callback: Function) => {
         if (data == null){
             callback(false)
             return;
@@ -220,7 +223,7 @@ io.Server.on('connection', (socket: any) => {
 
         if (data.user in config.users){
             //user exists
-            if (passwordHash.verify(config.users[data.user], data.passHash)){
+            if (passwordHash.verify(users[data.user], data.passHash)){
                 //password match! return true
                 //add socket to authenticated sockets
                 addAuth()
@@ -231,18 +234,19 @@ io.Server.on('connection', (socket: any) => {
         callback(false)
     });
 
-    socket.on('RECORD_TOGGLE', (data) => {
+    socket.on('RECORD_TOGGLE', (data: {newState: boolean}) => {
 
         if (authenticatedSockets.has(socket)) {
             changeState(data.newState, socket);
         }
     });
 
-    socket.on('RECORDINGS_UPDATE', (data) => {
 
-    });
+    // socket.on('RECORDINGS_UPDATE', (data) => {
 
-    socket.on('DOWNLOAD_FILE', (file, callback) => {
+    // });
+
+    socket.on('DOWNLOAD_FILE', (file: string, callback: Function) => {
         
         if (authenticatedSockets.has(socket)) {
             console.log(socket.handshake.address+" is downloading a file");
@@ -259,7 +263,7 @@ io.Server.on('connection', (socket: any) => {
         }
     })
 
-    socket.on('RENAME_FILE', (data) => {
+    socket.on('RENAME_FILE', (data: {newname: string, oldname: string}) => {
         
         if (authenticatedSockets.has(socket)) {
 
@@ -280,7 +284,7 @@ io.Server.on('connection', (socket: any) => {
         }
     })
 
-    socket.on('DELETE_FILE', (file) => {
+    socket.on('DELETE_FILE', (file: string) => {
         
         if (authenticatedSockets.has(socket)) {
 
@@ -321,7 +325,7 @@ function zip(path: string) {
 }
 
 
-let downloadTokens = {}
+let downloadTokens: {[key: string]: {path: string, created: number}} = {}
 
 function createDownload(filePath: string) {
   
@@ -348,7 +352,7 @@ function createDownload(filePath: string) {
 }
 
 function getDownload(token: string){
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         if (token in downloadTokens){
             let download = downloadTokens[token];
             
@@ -368,5 +372,5 @@ exitHook(() => {
     console.log('\nShutting down')
     //make sure to stop recordings
     console.log('Stopping recording if running')
-    changeState(false, null);
+    changeState(false);
 })
