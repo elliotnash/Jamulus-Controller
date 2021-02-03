@@ -1,3 +1,4 @@
+import fs from 'fs-extra';
 import path from 'path';
 import os from 'os-utils';
 import { exec } from "child_process";
@@ -6,19 +7,19 @@ import express from 'express';
 const app = express()
 const server = require('http').createServer(app);
 import * as SocketIO from 'socket.io'
-const io = require('socket.io')(server, {
-    cors: {
-        origin: '*'
-    }
-});
+const io = require('socket.io')(server, {cors: {origin: '*'} });
 import zipper from 'zip-a-folder';
 import passwordHash from 'password-hash';
 import exitHook from 'exit-hook';
-import fs from 'fs';
 
+import { store } from './storage-utils';
 
 const config = require('../config.json');
+config.recordingDirectory = config.recordingDirectory+"/";
 const users: any = config.users
+
+
+
 
 //TODO add resync button to sync recording state
 
@@ -295,12 +296,8 @@ io.on('connection', (socket: any) => {
             
             console.log('deleting '+filepath)
 
-            fs.rmdir(filepath, {recursive: true}, (err) => {
-                if ( err )
-                    console.log('ERROR: ' + err);
-                else{
-                    readDirectories(false);
-                }
+            fs.remove(filepath).then(() => {
+                readDirectories(false);
             });
             
         }
@@ -309,24 +306,6 @@ io.on('connection', (socket: any) => {
 
 
 })
-
-
-function zip(path: string) {
-    return new Promise((resolve, reject) => {
-
-        const zippath = path+".zip";
-
-        if (fs.existsSync(zippath)) {
-            console.log('path exists, not zipping')
-            resolve(zippath);
-            return;
-        }
-        zipper.zipFolder(path, zippath, (err) => {
-            err ? reject(err) : resolve(zippath);
-        })
-    });
-}
-
 
 let downloadTokens: {[key: string]: {path: string, created: number}} = {}
 

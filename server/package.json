@@ -7,6 +7,7 @@
   "dependencies": {
     "exit-hook": "^2.2.0",
     "express": "^4.17.1",
+    "fs-extra": "^9.1.0",
     "nanoid": "3.1.20",
     "os-utils": "^0.0.14",
     "password-hash": "^1.2.2",
@@ -15,6 +16,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.11",
+    "@types/fs-extra": "^9.0.6",
     "@types/node": "^14.14.22",
     "@types/os-utils": "^0.0.1",
     "@types/password-hash": "^1.2.20",

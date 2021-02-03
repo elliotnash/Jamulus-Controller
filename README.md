@@ -6,3 +6,5 @@ nodejs server must run as jamulus user
 jamulus user must have read write perms to recording directory, should probably create home directory for user jamulus and put it there
 
 download time is in minutes
+
+ffmpeg is required
