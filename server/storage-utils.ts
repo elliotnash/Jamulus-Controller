@@ -26,7 +26,7 @@ export function encodeAll(folder: string) {
                 return;
             }
 
-            let promises: Promise<void>[] = []
+            const promises: Promise<void>[] = []
             let inLength = 0;
             let args = "";
 
@@ -92,7 +92,7 @@ export function deleteWav(folder: string){
                 return;
             }
 
-            let promises: Promise<void>[] = []
+            const promises: Promise<void>[] = []
             
             files.forEach((file) => {
                 if (file.slice(-4)=='.wav'){
@@ -119,7 +119,7 @@ export function deleteWav(folder: string){
     }));
 }
 
-export function store(folder: string) {
+export default function store(folder: string) {
     return new Promise<void>(((resolve, reject) => {
         encodeAll(folder).then(() => {
             console.log('converting done');

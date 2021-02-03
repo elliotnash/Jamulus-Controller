@@ -12,26 +12,30 @@ import zipper from 'zip-a-folder';
 import passwordHash from 'password-hash';
 import exitHook from 'exit-hook';
 
-import { store } from './storage-utils';
+import store from './storage-utils';
+import DownloadUtils from './download-utils';
+import RecordingsManager from './recordings-manager';
 
 const config = require('../config.json');
 config.recordingDirectory = config.recordingDirectory+"/";
 const users: any = config.users
 
-
-
+const downloadUtils = new DownloadUtils(config.downloadExpireTime);
+const recordingsManager = new RecordingsManager();
 
 //TODO add resync button to sync recording state
+//TODO warning prompt when deleting file (client)
+//FIXME Clicking delete on dialog box instantly closes dialog
 
 app.use(express.static(path.join(__dirname, './client')));
 
 
 app.get('/download', function(req, res, next) {
     // Get the download sid
-    let token = req.query.token as string;
+    const token = req.query.token as string;
   
     // Get the download file path
-    getDownload(token).then((path: string) => {
+    downloadUtils.getDownload(token).then((path: string) => {
         res.sendFile(path);
     }).catch(() => {
         res.send('download has expired')
@@ -63,7 +67,7 @@ function updateInfo() {
 }
 
 const stateRegex = /(Recording state )(enabled|disabled)/gm;
-function readRecordState(): Boolean {
+function readRecordState(): boolean {
 
     let recordState = false;
 
@@ -76,13 +80,13 @@ function readRecordState(): Boolean {
             console.log(`stderr: ${stderr}`);
             return;
         }
-        let matches = stdout.match(stateRegex);
+        const matches = stdout.match(stateRegex);
 
         if (matches == null){
             return;
         }
 
-        let lastMatch = matches[matches.length-1];
+        const lastMatch = matches[matches.length-1];
 
         //have the last state
         recordState = lastMatch === 'Recording state enabled';
@@ -99,48 +103,11 @@ function getFirstTime(stats: fs.Stats){
     return(min);
 }
 
-function readDirectories(deleteNonZip?: Boolean){
-    return new Promise(((resolve, reject) => {
-        fs.readdir(config.recordingDirectory, (err, files) => {
-            if (err != null){
-                console.log(`There was an error reading the recording directory: ${err}`)
-                reject(err);
-                return;
-            }
-
-            //clear array
-            recordings = []
-
-            files.forEach(file => {
-                //only include folders in index
-                const stats = fs.statSync(config.recordingDirectory+"/"+file);
-                if (stats.isDirectory()){
-                    recordings.push({name: file, created: getFirstTime(stats)});
-                } else if (deleteNonZip){
-                    //then we should delete all other files
-                    fs.unlink(config.recordingDirectory+"/"+file, (err) => {
-                        if (err) console.log(err);
-                    });
-                }
-            })
-            recordings = recordings.sort(function(a, b) {
-                var x = a.created; var y = b.created;
-                return ((x > y) ? -1 : ((x < y) ? 1 : 0));
-            });
-            updateRecordingList();
-            resolve(recordings);
-        })
-    }));
-
-}
-
-readDirectories(false);
-
 setInterval(updateInfo, 1000)
 
-let recordState: Boolean = readRecordState();
+let recordState: boolean = readRecordState();
 
-function changeState(newState: Boolean, socket?: SocketIO.Socket){
+function changeState(newState: boolean, socket?: SocketIO.Socket){
     if (recordState !== newState){
         //state was changed, time to fire recording change
 
@@ -168,9 +135,7 @@ function changeState(newState: Boolean, socket?: SocketIO.Socket){
 
             if (!newState){
                 //this means recording was just stopped, we'll need to update our directory index
-                readDirectories(false).then(() => {
-                });
-                //
+                recordingsManager.readDirectories();
 
             }
 
@@ -181,9 +146,7 @@ function changeState(newState: Boolean, socket?: SocketIO.Socket){
     }
 }
 
-let authenticatedSockets: Set<SocketIO.Socket> = new Set()
-
-let recordings: {name: string, created: Date}[] = []
+const authenticatedSockets: Set<SocketIO.Socket> = new Set()
 
 function updateAuthClientState(){
     authenticatedSockets.forEach(function(socket: any){
@@ -195,7 +158,7 @@ function updateAuthClientState(){
 
 function updateRecordingList(){
     authenticatedSockets.forEach((socket: any) => {
-        socket.emit('RECORDINGS_UPDATE', recordings)
+        socket.emit('RECORDINGS_UPDATE', recordingsManager.toClient())
     })
 }
 
@@ -213,7 +176,7 @@ io.on('connection', (socket: any) => {
             newState: recordState
         });
         //and recording list
-        socket.emit('RECORDINGS_UPDATE', recordings)
+        socket.emit('RECORDINGS_UPDATE', recordingsManager.toClient())
     }
 
     socket.on('authenticate', (data: {user: string, passHash: string}, callback: Function) => {
@@ -252,12 +215,8 @@ io.on('connection', (socket: any) => {
         if (authenticatedSockets.has(socket)) {
             console.log(socket.handshake.address+" is downloading a file");
 
-            createDownload(config.recordingDirectory+"/"+file).then((token) => {
-                //zip-a-file sometimes calls the callback before zip is done,
-                //need to set small timeout before sending ready callback
-            setTimeout(() => {
+            downloadUtils.createDownload(config.recordingDirectory+"/"+file+".zip").then((token) => {
                 callback(`/download?token=${token}`);
-            }, 500);
             });
 
             
@@ -268,8 +227,8 @@ io.on('connection', (socket: any) => {
         
         if (authenticatedSockets.has(socket)) {
 
-            const oldpath = config.recordingDirectory+"/"+data.oldname
-            const newpath = config.recordingDirectory+"/"+data.newname
+            const oldpath = config.recordingDirectory+"/"+data.oldname+".zip";
+            const newpath = config.recordingDirectory+"/"+data.newname+".zip";
 
 
             if (!fs.existsSync(oldpath)) return;
@@ -278,7 +237,7 @@ io.on('connection', (socket: any) => {
                 if ( err )
                     console.log('ERROR: ' + err);
                 else{
-                    readDirectories(false);
+                    recordingsManager.readDirectories();
                 }
             });
             
@@ -297,7 +256,7 @@ io.on('connection', (socket: any) => {
             console.log('deleting '+filepath)
 
             fs.remove(filepath).then(() => {
-                readDirectories(false);
+                recordingsManager.readDirectories();
             });
             
         }
@@ -306,49 +265,6 @@ io.on('connection', (socket: any) => {
 
 
 })
-
-let downloadTokens: {[key: string]: {path: string, created: number}} = {}
-
-function createDownload(filePath: string) {
-  
-    return new Promise((resolve, reject) => {
-        // Check the existence of the file
-        if (!fs.existsSync(filePath)) return;
-    
-        zip(filePath).then((zippath) => {
-                // Generate the download token
-            let downloadToken = nanoid.nanoid(48);
-            
-            downloadTokens[downloadToken] = {
-                path: filePath+".zip",
-                created: Date.now()
-            }
-
-            resolve(downloadToken);
-
-        }).catch((err) => {
-            console.log(err);
-        })
-
-    });
-}
-
-function getDownload(token: string){
-    return new Promise<string>((resolve, reject) => {
-        if (token in downloadTokens){
-            let download = downloadTokens[token];
-            
-            if (download.created > (Date.now() - (config.downloadExpireTime*60000))){
-                ;
-                return resolve(download.path);
-            }
-        }
-
-        delete downloadTokens[token];
-        reject();
-
-    })
-}
 
 exitHook(() => {
     console.log('\nShutting down')
