@@ -109,8 +109,8 @@ const store = new Vuex.Store({
 
 export default store
 
-let host = window.location.host;
-//let host = '192.168.1.131:3080'
+//let host = window.location.host;
+let host = '192.168.0.196:3080'
 let socket = io(host);
 
 socket.on('RECORD_TOGGLE', (data) => {
@@ -120,7 +120,6 @@ socket.on('RECORD_TOGGLE', (data) => {
 });
 
 socket.on('RECORDINGS_UPDATE', (data) => {
-  console.log('haa')
   console.log(data)
   store.commit('setRecordings', data);
 })

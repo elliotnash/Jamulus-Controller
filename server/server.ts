@@ -12,7 +12,6 @@ import zipper from 'zip-a-folder';
 import passwordHash from 'password-hash';
 import exitHook from 'exit-hook';
 
-import store from './storage-utils';
 import DownloadUtils from './download-utils';
 import RecordingsManager from './recordings-manager';
 
@@ -21,7 +20,9 @@ config.recordingDirectory = config.recordingDirectory+"/";
 const users: any = config.users
 
 const downloadUtils = new DownloadUtils(config.downloadExpireTime);
-const recordingsManager = new RecordingsManager();
+const recordingsManager = new RecordingsManager(config.recordingDirectory, () => {
+    updateRecordingList();
+});
 
 //TODO add resync button to sync recording state
 //TODO warning prompt when deleting file (client)
@@ -67,45 +68,43 @@ function updateInfo() {
 }
 
 const stateRegex = /(Recording state )(enabled|disabled)/gm;
-function readRecordState(): boolean {
+function readRecordState(): Promise<boolean> {
+    return new Promise<boolean>(((resolve, reject) => {
 
-    let recordState = false;
-
-    exec(`journalctl -u ${config.systemdServiceName} --no-pager -q -n 25`, (error, stdout, stderr) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            return;
-        }
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-        }
-        const matches = stdout.match(stateRegex);
-
-        if (matches == null){
-            return;
-        }
-
-        const lastMatch = matches[matches.length-1];
-
-        //have the last state
-        recordState = lastMatch === 'Recording state enabled';
-
-    });
-
-    return recordState;
-
-}
-
-function getFirstTime(stats: fs.Stats){
-    const times = [stats.birthtime, stats.mtime, stats.ctime]
-    const min = times.reduce((first, second) => first < second ? first : second )
-    return(min);
+        exec(`journalctl -u ${config.systemdServiceName} --no-pager -q -n 25`, (error, stdout, stderr) => {
+            if (error) {
+                console.log(`error: ${error.message}`);
+                return;
+            }
+            if (stderr) {
+                console.log(`stderr: ${stderr}`);
+                return;
+            }
+            const matches = stdout.match(stateRegex);
+    
+            if (matches == null){
+                resolve(false);
+                return;
+            }
+    
+            const lastMatch = matches[matches.length-1];
+            //have the last state
+            resolve(lastMatch == 'Recording state enabled');
+    
+        });
+    
+    }))
 }
 
 setInterval(updateInfo, 1000)
 
-let recordState: boolean = readRecordState();
+let recordState: boolean = false;
+readRecordState().then((state) => {
+    recordState = state;
+    console.log(recordState)
+    recordingsManager.readDirectories(!recordState)
+    updateAuthClientState();
+})
 
 function changeState(newState: boolean, socket?: SocketIO.Socket){
     if (recordState !== newState){
@@ -134,7 +133,7 @@ function changeState(newState: boolean, socket?: SocketIO.Socket){
             updateAuthClientState();
 
             if (!newState){
-                //this means recording was just stopped, we'll need to update our directory index
+                //this means recording was just stopped, we'll need to encode audio + zip directory
                 recordingsManager.readDirectories();
 
             }
@@ -248,7 +247,7 @@ io.on('connection', (socket: any) => {
         
         if (authenticatedSockets.has(socket)) {
 
-            const filepath = config.recordingDirectory+"/"+file
+            const filepath = config.recordingDirectory+"/"+file+".zip"
 
 
             if (!fs.existsSync(filepath)) return;

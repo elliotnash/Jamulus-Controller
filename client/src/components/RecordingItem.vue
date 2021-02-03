@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="elementdiv" v-wave  @click="itemClick()">
+    <div :class="recording.processed ? 'elementdiv' : 'elementdivdisabled'" v-wave  @click="itemClick()">
       <div class="textdiv">
         <span class="boxtitle" >{{ recording.name }}</span>
       </div>
@@ -32,9 +32,9 @@ export default {
   },
   methods: {
     itemClick() {
-
-      this.showDialog = true;
-
+      if (this.recording.processed){
+        this.showDialog = true;
+      }
     }
   }
 }
@@ -54,6 +54,13 @@ div
     @media(hover: hover) and (pointer: fine)
       &:hover
         background: #4C566A
+  
+  &.elementdivdisabled
+    @extend .elementdiv 
+    background: #2E3440
+    @media(hover: hover) and (pointer: fine)
+      &:hover
+        background: #2E3440
 
   &.textdiv
     border-radius: 10px

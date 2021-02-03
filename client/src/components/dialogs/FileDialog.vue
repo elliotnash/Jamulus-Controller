@@ -15,7 +15,7 @@
             <div class="contentdiv">
               <div class="spacer"/>
               <div class="itemdiv">
-                <input class="inputbox" type="text" v-model="newname" />
+                <input class="inputbox" type="text" @keydown="passKeyDown($event)" v-model="newname" />
                 <Button @click="renameFile()" :title="'RENAME'" />
               </div>
               <div class="itemdiv">
@@ -53,6 +53,11 @@ export default {
   methods: {
     onClick(){
     },
+    passKeyDown(event){
+      if(event.key === 'Enter') {
+        this.renameFile();
+      }
+    },
     close(){
       this.show = false;
       //wait for animation to set dialog as closed
@@ -63,13 +68,16 @@ export default {
     },
     downloadFile(){
       this.$store.dispatch('downloadFile', this.recording.name);
+      this.close();
     },
     renameFile(){
       console.log(this.newname);
       this.$store.dispatch('renameFile', {oldname: this.recording.name, newname: this.newname});
+      this.close();
     },
     deleteFile(){
       this.$store.dispatch('deleteFile', this.recording.name);
+      this.close();
     }
   },
   created() {
