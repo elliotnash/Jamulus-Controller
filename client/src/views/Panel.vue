@@ -39,10 +39,10 @@ import Header from '@/components/Header'
 import ControlBox from "@/components/ControlBox";
 import InfoBox from "@/components/InfoBox";
 import RecordingBox from "@/components/RecordingBox";
+import FileDialog from '../components/dialogs/FileDialog.vue';
 
 import Vue from 'vue'
 import VWave from 'v-wave'
-import FileDialog from '../components/dialogs/FileDialog.vue';
 Vue.use(VWave, {
   color: '#2E3440',
   startingOpacity: 0.5,

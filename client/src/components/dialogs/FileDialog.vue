@@ -5,12 +5,12 @@
       <div v-if="show" class="shader"/>
     </transition>
 
-    <div @click="close()" class="fullpage">
+    <div @mousedown.left="close()" class="fullpage">
       <transition name="scale">
         <div v-if="show" class="dialogdiv">
-          <div @click.stop="onClick()" class="dialogbox">
+          <div @mousedown.left.stop="onClick()" class="dialogbox">
             <div class="boxheader">
-              <span class="boxtitle">ChOoSe An AcTiOn</span>
+              <span class="boxtitle">Choose an action</span>
             </div>
             <div class="contentdiv">
               <div class="spacer"/>

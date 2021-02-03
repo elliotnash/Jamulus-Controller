@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="elementdiv" v-wave @click="close()" >
+    <div class="elementdiv" v-wave  @click="itemClick()">
       <div class="textdiv">
         <span class="boxtitle" >{{ recording.name }}</span>
       </div>
@@ -31,7 +31,7 @@ export default {
       }
   },
   methods: {
-    close() {
+    itemClick() {
 
       this.showDialog = true;
 

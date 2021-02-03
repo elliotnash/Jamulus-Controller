@@ -98,7 +98,7 @@ function getFirstTime(stats: fs.Stats){
     return(min);
 }
 
-function readDirectories(deleteNonDir?: Boolean){
+function readDirectories(deleteNonZip?: Boolean){
     return new Promise(((resolve, reject) => {
         fs.readdir(config.recordingDirectory, (err, files) => {
             if (err != null){
@@ -115,7 +115,7 @@ function readDirectories(deleteNonDir?: Boolean){
                 const stats = fs.statSync(config.recordingDirectory+"/"+file);
                 if (stats.isDirectory()){
                     recordings.push({name: file, created: getFirstTime(stats)});
-                } else if (deleteNonDir){
+                } else if (deleteNonZip){
                     //then we should delete all other files
                     fs.unlink(config.recordingDirectory+"/"+file, (err) => {
                         if (err) console.log(err);
@@ -133,7 +133,7 @@ function readDirectories(deleteNonDir?: Boolean){
 
 }
 
-readDirectories(true);
+readDirectories(false);
 
 setInterval(updateInfo, 1000)
 
@@ -316,8 +316,11 @@ function zip(path: string) {
 
         const zippath = path+".zip";
 
-        if (!fs.existsSync(zippath)) resolve(zippath);
-
+        if (fs.existsSync(zippath)) {
+            console.log('path exists, not zipping')
+            resolve(zippath);
+            return;
+        }
         zipper.zipFolder(path, zippath, (err) => {
             err ? reject(err) : resolve(zippath);
         })

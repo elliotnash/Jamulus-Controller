@@ -10,15 +10,7 @@
                 v-text="recordingState ? 'STOP RECORDING' : 'START RECORDING'" />
       </div>
     </div>
-    <div class="itemdiv">
-      <div class="left">
-        <span class="boxtitle">START NEW RECORDING</span>
-      </div>
-      <div class="right">
-        <button slot="pure" onselectstart="return false;" id="new-record" @click="newRecording($event)"
-                class="bluebtn" v-wave >NEW RECORDING</button>
-      </div>
-    </div>
+    
     <div class="itemdiv">
       <div class="left">
         <span class="boxtitle">REFRESH RECORDING LIST</span>
