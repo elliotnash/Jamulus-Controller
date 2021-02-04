@@ -10,7 +10,7 @@ export function zip(path: string) {
 
         zipper.zipFolder(path, zippath, (err) => {
             err ? reject(err) : resolve(zippath);
-        })
+        });
     });
 }
 
@@ -21,12 +21,12 @@ export function encodeAll(folder: string) {
 
         fs.readdir(folder, (err, files) => {
             if (err != null){
-                console.log(`There was an error reading the recording directory: ${err}`)
+                console.log(`There was an error reading the recording directory: ${err}`);
                 reject(err);
                 return;
             }
 
-            const promises: Promise<void>[] = []
+            const promises: Promise<void>[] = [];
             let inLength = 0;
             let args = "";
 
@@ -51,9 +51,9 @@ export function encodeAll(folder: string) {
                     
                             });
                         }))
-                    )
+                    );
                 }
-            })
+            });
 
             promises.push(
                 new Promise<void>(((resolve, reject) => {
@@ -70,13 +70,13 @@ export function encodeAll(folder: string) {
             
                     });
                 }))
-            )
+            );
 
             Promise.all(promises).then(() => {
                 resolve();
-            })
+            });
 
-        })
+        });
 
     }));
 }
@@ -87,12 +87,12 @@ export function deleteWav(folder: string){
 
         fs.readdir(folder, (err, files) => {
             if (err != null){
-                console.log(`There was an error reading the recording directory: ${err}`)
+                console.log(`There was an error reading the recording directory: ${err}`);
                 reject(err);
                 return;
             }
 
-            const promises: Promise<void>[] = []
+            const promises: Promise<void>[] = [];
             
             files.forEach((file) => {
                 if (file.slice(-4)=='.wav'){
@@ -103,17 +103,17 @@ export function deleteWav(folder: string){
                                     console.log(err);
                                     reject();
                                 } else {
-                                    resolve()
+                                    resolve();
                                 }
                             });
                         }))
-                    )
+                    );
                 }
             });
 
             Promise.all(promises).then(() => {
                 resolve();
-            })
+            });
 
         });
     }));
@@ -126,7 +126,7 @@ export default function store(folder: string) {
             deleteWav(folder).then(() => {
                 console.log('wavs deleted');
                 zip(folder).then(() => {
-                    console.log('zipping done')
+                    console.log('zipping done');
                     fs.remove(folder).then(() => {
                         console.log('folder deleted');
                         resolve();

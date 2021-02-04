@@ -10,7 +10,7 @@ export default class DownloadUtils {
         this.expireTime = expireTime;
     }
 
-    createDownload(filePath: string) {
+    createDownload(filePath: string): Promise<string> {
     
         return new Promise((resolve, reject) => {
             // Check the existence of the file
@@ -21,7 +21,7 @@ export default class DownloadUtils {
             this.downloadTokens[downloadToken] = {
                 path: filePath,
                 created: Date.now()
-            }
+            };
 
             resolve(downloadToken);
 
@@ -42,6 +42,6 @@ export default class DownloadUtils {
             delete this.downloadTokens[token];
             reject();
 
-        })
+        });
     }
 }

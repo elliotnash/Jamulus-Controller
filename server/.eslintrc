@@ -6,7 +6,16 @@
     ],
     "extends": [
       "eslint:recommended",
-      "plugin:@typescript-eslint/eslint-recommended",
-      "plugin:@typescript-eslint/recommended"
-    ]
+      "plugin:@typescript-eslint/recommended",
+      "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    ],
+    "rules": {
+      "@typescript-eslint/no-var-requires": "warn",
+      "semi": [2, "always"],
+      "@typescript-eslint/no-floating-promises": "off",
+      "@typescript-eslint/ban-types": "warn"
+    },
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    }
   }

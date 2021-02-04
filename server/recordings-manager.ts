@@ -15,10 +15,10 @@ export default class RecordingsManager{
 
     toClient(){
         //TODO return recordings without .zip extension
-        let recordings: {name: string, created: Date, processed: boolean}[] = []
+        let recordings: {name: string, created: Date, processed: boolean}[] = [];
         Object.values(this.recordings).forEach((recording) => {
             recordings.push({name: recording.name.slice(0, -4), created: recording.created, processed: recording.processed});
-        })
+        });
         recordings = recordings.sort(function(a, b) {
             const x = a.created; const y = b.created;
             return ((x > y) ? -1 : ((x < y) ? 1 : 0));
@@ -27,22 +27,22 @@ export default class RecordingsManager{
     }
 
     private getFirstTime(stats: fs.Stats){
-        const times = [stats.birthtime, stats.mtime, stats.ctime]
-        const min = times.reduce((first, second) => first < second ? first : second )
+        const times = [stats.birthtime, stats.mtime, stats.ctime];
+        const min = times.reduce((first, second) => first < second ? first : second );
         return(min);
     }
 
-    readDirectories(zipFolders:boolean = true){
+    readDirectories(zipFolders = true){
         return new Promise(((resolve, reject) => {
             fs.readdir(this.recordingDirectory, (err, files) => {
                 if (err != null){
-                    console.log(`There was an error reading the recording directory: ${err}`)
+                    console.log(`There was an error reading the recording directory: ${err}`);
                     reject(err);
                     return;
                 }
                 //TODO make this async for files in the folder, should be easy with promises (download-utils)
                 //clear array
-                this.recordings = {}
+                this.recordings = {};
     
                 files.forEach(file => {
                     //only include folders in index
@@ -61,7 +61,7 @@ export default class RecordingsManager{
                                         this.recordings[zipname].processed = true;
                                         //make sure to call update again
                                         this.onUpdate();
-                                    })
+                                    });
                                 } else {
                                     //TODO should probably delete the folder, not quite wanting to do that now
                                 }
@@ -71,12 +71,12 @@ export default class RecordingsManager{
                             }
                         }
                     }
-                })
+                });
                 //TODO read directories no longer updates recording list - implement in main loop
                 //Posible implementation with callbacks
                 this.onUpdate();
                 resolve(this.recordings);
-            })
+            });
         }));
     
     }
