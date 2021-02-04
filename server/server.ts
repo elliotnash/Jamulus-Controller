@@ -14,6 +14,7 @@ import exitHook from 'exit-hook';
 import DownloadUtils from './download-utils';
 import RecordingsManager from './recordings-manager';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const config = require('../config.json') as {port: string, users: {[key: string]: string}, systemdServiceName: string, recordingDirectory: string, downloadExpireTime: number};
 config.recordingDirectory = config.recordingDirectory+"/";
 const users = config.users;
@@ -25,6 +26,7 @@ const recordingsManager = new RecordingsManager(config.recordingDirectory, () =>
 
 //TODO add resync button to sync recording state
 //TODO warning prompt when deleting file (client)
+//TODO typescript on the client?
 //FIXME Clicking delete on dialog box instantly closes dialog
 
 app.use(express.static(path.join(__dirname, './client')));
@@ -38,7 +40,8 @@ app.get('/download', function(req, res, next) {
     downloadUtils.getDownload(token).then((path: string) => {
         res.sendFile(path);
     }).catch(() => {
-        res.send('download has expired');
+        next();
+        // res.send('download has expired');
     });
 });
 
@@ -67,7 +70,7 @@ function updateInfo() {
 
 const stateRegex = /(Recording state )(enabled|disabled)/gm;
 function readRecordState(): Promise<boolean> {
-    return new Promise<boolean>(((resolve, reject) => {
+    return new Promise<boolean>(((resolve) => {
 
         exec(`journalctl -u ${config.systemdServiceName} --no-pager -q -n 25`, (error, stdout, stderr) => {
             if (error) {
@@ -175,7 +178,7 @@ io.on('connection', (socket: SocketIO.Socket) => {
         socket.emit('RECORDINGS_UPDATE', recordingsManager.toClient());
     }
 
-    socket.on('authenticate', (data: {user: string, passHash: string}, callback: Function) => {
+    socket.on('authenticate', (data: {user: string, passHash: string}, callback: {(authenticated: boolean): void}) => {
         if (data == null){
             callback(false);
             return;
@@ -206,7 +209,7 @@ io.on('connection', (socket: SocketIO.Socket) => {
 
     // });
 
-    socket.on('DOWNLOAD_FILE', (file: string, callback: Function) => {
+    socket.on('DOWNLOAD_FILE', (file: string, callback: {(token: string): void}) => {
         
         if (authenticatedSockets.has(socket)) {
             console.log(socket.handshake.address+" is downloading a file");
