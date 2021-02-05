@@ -12,32 +12,29 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 
-import FileDialog from './dialogs/FileDialog';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
-export default {
+import FileDialog from './dialogs/FileDialog.vue';
 
-  name: "RecordingItem",
-  components: {
-    FileDialog
-  },
-  props: {
-    recording: {}
-  },
-  data(){
-      return {
-        showDialog: false
-      };
-  },
-  methods: {
-    itemClick() {
-      if (this.recording.processed){
-        this.showDialog = true;
-      }
+@Component({components: {
+  FileDialog
+}})
+export default class RecordingItem extends Vue {
+
+  showDialog = false
+
+  //FIXME also here
+  @Prop() recording!: any
+  
+  itemClick() {
+    if (this.recording.processed){
+      this.showDialog = true;
     }
   }
-};
+
+}
 </script>
 
 <style scoped lang="sass">
