@@ -8,7 +8,7 @@
             <div class="boxheader">
               <span class="boxtitle">CONTROLS</span>
             </div>
-            <ControlBox v-bind:recording-state="$store.state.recordingState" @recordToggle="onRecordToggle($event)"/>
+            <ControlBox v-bind:recording-state="$store.state.recordingState" @recordToggle="onRecordToggle()"/>
 
           </div>
         </div>
@@ -34,13 +34,15 @@
   </div>
 </template>
 
-<script>
-import Header from '@/components/Header';
-import ControlBox from "@/components/ControlBox";
-import InfoBox from "@/components/InfoBox";
-import RecordingBox from "@/components/RecordingBox";
+<script lang="ts">
 
-import Vue from 'vue';
+import { Component, Vue } from 'vue-property-decorator';
+
+import Header from '@/components/Header.vue';
+import ControlBox from "@/components/ControlBox.vue";
+import InfoBox from "@/components/InfoBox.vue";
+import RecordingBox from "@/components/RecordingBox.vue";
+
 import VWave from 'v-wave';
 Vue.use(VWave, {
   color: '#2E3440',
@@ -48,39 +50,28 @@ Vue.use(VWave, {
   easing: 'ease-out',
 });
 
-export default {
-  name: 'Panel',
-  components: {
-    RecordingBox,
-    InfoBox,
-    ControlBox,
-    Header
-  },
-  data () {
-    return {
-    };
-  },
-  methods: {
-    onLogOutClick(){
-      this.$store.commit('setAuthentication', false);
-      this.$router.push('/login');
-    },
-    onRecordToggle(event){
-      console.log(event);
-      this.$store.dispatch('emitRecordToggle', !this.$store.state.recordingState);
-    }
-  },
+@Component({components: {
+  Header,
+  ControlBox,
+  InfoBox,
+  RecordingBox
+}})
+export default class Panel extends Vue {
+
+  onLogOutClick(){
+    this.$store.commit('setAuthentication', false);
+    this.$router.push('/login');
+  }
+
+  onRecordToggle(){
+    this.$store.dispatch('emitRecordToggle', !this.$store.state.recordingState);
+  }
+
   created () {
-
-    document.title = 'Jamulus Recordings';
-
-    const host = window.location.host;
-    console.log(host);
-
-  },
+  }
   mounted () {
   }
-};
+}
 </script>
 
 <style lang="sass">

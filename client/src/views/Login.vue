@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="background">
-      <Header displayName="Jamulus Recordings"/>
+      <Header displayName="Jamulus Recordings" showLogOut="true"/>
       <div class="mainbox">
         <div class="itemdiv">
           <div class="box">
