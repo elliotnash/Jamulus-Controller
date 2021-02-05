@@ -5,35 +5,24 @@
         <span id="title" class="title">{{ displayName }}</span>
       </div>
       <div v-if="showLogOut" class="buttondiv">
-        <button v-wave onselectstart="return false;" id="logoutbtn" class="logoutbtn" @click="onLogOutClick($event)">Log Out</button>
+        <button v-wave onselectstart="return false;" id="logoutbtn" class="logoutbtn" @click="clickLogOut()">Log Out</button>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import Vue from 'vue';
-import VWave from 'v-wave';
+<script lang="ts">
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
-Vue.use(VWave, {
-  color: '#2E3440',
-  startingOpacity: 0.5,
-  easing: 'ease-out'
-});
+@Component
+export default class Header extends Vue {
+  @Prop(Number) readonly displayName!: string
+  @Prop(Boolean) readonly showLogOut!: boolean
 
-export default {
-  name: 'Header',
-  props: {
-    displayName: String,
-    showLogOut: Boolean
-  },
-  modules: ['v-wave/nuxt'],
-  methods: {
-    onLogOutClick(event) {
-      this.$emit('clickLogOut', event);
-    },
+  clickLogOut() {
+    this.$emit('clickLogOut');
   }
-};
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

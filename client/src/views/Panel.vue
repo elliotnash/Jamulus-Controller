@@ -66,11 +66,6 @@ export default class Panel extends Vue {
   onRecordToggle(){
     this.$store.dispatch('emitRecordToggle', !this.$store.state.recordingState);
   }
-
-  created () {
-  }
-  mounted () {
-  }
 }
 </script>
 
