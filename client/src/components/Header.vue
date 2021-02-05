@@ -12,14 +12,14 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import VWave from 'v-wave'
+import Vue from 'vue';
+import VWave from 'v-wave';
 
 Vue.use(VWave, {
   color: '#2E3440',
   startingOpacity: 0.5,
   easing: 'ease-out'
-})
+});
 
 export default {
   name: 'Header',
@@ -30,10 +30,10 @@ export default {
   modules: ['v-wave/nuxt'],
   methods: {
     onLogOutClick(event) {
-      this.$emit('clickLogOut', event)
+      this.$emit('clickLogOut', event);
     },
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

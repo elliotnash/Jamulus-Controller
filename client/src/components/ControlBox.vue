@@ -35,14 +35,14 @@
 
 <script>
 
-import Vue from 'vue'
-import VWave from 'v-wave'
+import Vue from 'vue';
+import VWave from 'v-wave';
 
 Vue.use(VWave, {
   color: '#2E3440',
   startingOpacity: 0.5,
   easing: 'ease-out',
-})
+});
 
 
 export default {
@@ -52,13 +52,13 @@ export default {
   },
   methods: {
     newRecording(event){
-      console.log(event)
+      console.log(event);
     },
     refreshRecordings(event){
-      console.log(event)
+      console.log(event);
     }
   }
-}
+};
 </script>
 
 <style scoped lang="sass">

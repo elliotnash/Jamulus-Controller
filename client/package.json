@@ -59,7 +59,10 @@
     },
     "rules": {
       "vue/no-unused-components": "warn",
-      "no-unused-vars": "warn"
+      "no-unused-vars": "warn",
+      "@typescript-eslint/no-var-requires": "warn",
+      "semi": [2, "always"],
+      "@typescript-eslint/no-floating-promises": "off"
     }
   },
   "browserslist": [

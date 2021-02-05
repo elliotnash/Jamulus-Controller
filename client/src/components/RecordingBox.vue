@@ -20,7 +20,7 @@ export default {
   props: ['recordings'],
   created() {
   }
-}
+};
 </script>
 
 <style scoped lang="sass">

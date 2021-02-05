@@ -18,14 +18,14 @@ export default {
   },
   data() {
     return {
-    }
+    };
   },
   methods: {
     onClick(){
         this.$emit('click');
     },
   }
-}
+};
 </script>
 
 <style scoped lang="sass">

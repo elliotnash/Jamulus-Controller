@@ -20,7 +20,7 @@
 export default {
   name: "InfoBox",
   props: ['systemInfo']
-}
+};
 </script>
 
 <style scoped lang="sass">

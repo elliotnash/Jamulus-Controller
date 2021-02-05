@@ -1,9 +1,9 @@
-import Vue from 'vue'
+import Vue from 'vue';
 // eslint-disable-next-line no-unused-vars
-import VueRouter, { Route } from 'vue-router'
-import store from '@/store/index'
+import VueRouter, { Route } from 'vue-router';
+import store from '@/store/index';
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 //TODO eslint
 //TODO proper store
@@ -17,15 +17,15 @@ const routes = [
     beforeEnter: (to: Route, from: Route, next: {(path?: string): void}) => {
       //authentication to prevent loading panel when not logged in
       //fetch credentials from cookie to see if can resume session
-      store.commit("fetchCredentials")
+      store.commit("fetchCredentials");
 
       store.dispatch('authenticate', store.state.credentials).then(() => {
-        console.log('auth success')
+        console.log('auth success');
         next();
       }, () => {
-        console.log('auth fail')
+        console.log('auth fail');
         next('/login');
-      })
+      });
     }
   },
   {
@@ -33,11 +33,11 @@ const routes = [
     name: 'Login',
     component: () => import('@/views/Login.vue')
   }
-]
+];
 
 const router = new VueRouter({
   mode: 'history',
   routes
-})
+});
 
-export default router
+export default router;

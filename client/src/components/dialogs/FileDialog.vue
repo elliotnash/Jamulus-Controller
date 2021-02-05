@@ -34,7 +34,7 @@
 
 <script>
 
-import Button from '../parts/Button'
+import Button from '../parts/Button';
 
 export default {
   name: "InfoBox",
@@ -48,7 +48,7 @@ export default {
     return {
       newname: "",
       show: false
-    }
+    };
   },
   methods: {
     onClick(){
@@ -62,7 +62,7 @@ export default {
       this.show = false;
       //wait for animation to set dialog as closed
       setTimeout(() => {
-        this.$emit('close')
+        this.$emit('close');
       }, 200);
       
     },
@@ -86,7 +86,7 @@ export default {
   mounted() {
     this.show = true;
   }
-}
+};
 </script>
 
 <style scoped lang="sass">

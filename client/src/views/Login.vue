@@ -49,12 +49,12 @@ export default {
         username: "",
         password: ""
       }
-    }
+    };
   },
   methods: {
     passKeyDown(event){
       if(event.key === 'Enter') {
-        this.login()
+        this.login();
       }
     },
     login() {
@@ -63,14 +63,14 @@ export default {
         user: this.input.username,
         passHash: passwordHash.generate(this.input.password)
       }).then(() => {
-        this.$router.push('/')
+        this.$router.push('/');
       }, () => {
-        console.log('incorrect pass')
-      })
+        console.log('incorrect pass');
+      });
 
     }
   }
-}
+};
 </script>
 
 <style scoped lang="sass">

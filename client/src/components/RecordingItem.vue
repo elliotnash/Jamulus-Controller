@@ -14,7 +14,7 @@
 
 <script>
 
-import FileDialog from './dialogs/FileDialog'
+import FileDialog from './dialogs/FileDialog';
 
 export default {
 
@@ -28,7 +28,7 @@ export default {
   data(){
       return {
         showDialog: false
-      }
+      };
   },
   methods: {
     itemClick() {
@@ -37,7 +37,7 @@ export default {
       }
     }
   }
-}
+};
 </script>
 
 <style scoped lang="sass">

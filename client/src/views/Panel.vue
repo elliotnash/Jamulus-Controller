@@ -35,19 +35,18 @@
 </template>
 
 <script>
-import Header from '@/components/Header'
+import Header from '@/components/Header';
 import ControlBox from "@/components/ControlBox";
 import InfoBox from "@/components/InfoBox";
 import RecordingBox from "@/components/RecordingBox";
-import FileDialog from '../components/dialogs/FileDialog.vue';
 
-import Vue from 'vue'
-import VWave from 'v-wave'
+import Vue from 'vue';
+import VWave from 'v-wave';
 Vue.use(VWave, {
   color: '#2E3440',
   startingOpacity: 0.5,
   easing: 'ease-out',
-})
+});
 
 export default {
   name: 'Panel',
@@ -55,34 +54,33 @@ export default {
     RecordingBox,
     InfoBox,
     ControlBox,
-    Header,
-    FileDialog
+    Header
   },
   data () {
     return {
-    }
+    };
   },
   methods: {
     onLogOutClick(){
       this.$store.commit('setAuthentication', false);
-      this.$router.push('/login')
+      this.$router.push('/login');
     },
     onRecordToggle(event){
-      console.log(event)
-      this.$store.dispatch('emitRecordToggle', !this.$store.state.recordingState)
+      console.log(event);
+      this.$store.dispatch('emitRecordToggle', !this.$store.state.recordingState);
     }
   },
   created () {
 
-    document.title = 'Jamulus Recordings'
+    document.title = 'Jamulus Recordings';
 
     const host = window.location.host;
-    console.log(host)
+    console.log(host);
 
   },
   mounted () {
   }
-}
+};
 </script>
 
 <style lang="sass">
