@@ -7,6 +7,7 @@ const app = express();
 import * as http from "http"; 
 const server = http.createServer(app);
 import * as SocketIO from 'socket.io';
+//
 const io = new SocketIO.Server(server, {cors: {origin: '*'} });
 import passwordHash from 'password-hash';
 import exitHook from 'exit-hook';
@@ -24,6 +25,7 @@ const recordingsManager = new RecordingsManager(config.recordingDirectory, () =>
     updateRecordingList();
 });
 
+//TODO setup nodemon to allow auto reload for dev
 //TODO add resync button to sync recording state
 //TODO warning prompt when deleting file (client)
 //TODO typescript on the client?

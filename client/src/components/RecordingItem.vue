@@ -24,9 +24,8 @@ import FileDialog from './dialogs/FileDialog.vue';
 export default class RecordingItem extends Vue {
 
   showDialog = false
-
-  //FIXME also here
-  @Prop() recording!: any
+  
+  @Prop() recording!: {name: string, created: Date, processed: boolean}
   
   itemClick() {
     if (this.recording.processed){

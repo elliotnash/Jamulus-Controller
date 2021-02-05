@@ -116,7 +116,7 @@ socket.on('RECORD_TOGGLE', (data: any) => {
   console.log(store.state.recordingState);
 });
 
-socket.on('RECORDINGS_UPDATE', (data: any) => {
+socket.on('RECORDINGS_UPDATE', (data: {name: string, created: Date, processed: boolean}[]) => {
   console.log(data);
   store.commit('setRecordings', data);
 });

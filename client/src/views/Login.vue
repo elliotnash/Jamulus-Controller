@@ -34,6 +34,7 @@
 </template>
 
 <script lang="ts">
+//TODO Animate failed login (+message)
 import { Component, Vue } from 'vue-property-decorator';
 
 import Header from "@/components/Header.vue";

@@ -6,26 +6,22 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 
-export default {
-  name: "Button",
-  props: {
-    title: String,
-    color: {
-        default: 'blue'
-    }
-  },
-  data() {
-    return {
-    };
-  },
-  methods: {
-    onClick(){
-        this.$emit('click');
-    },
+import { Vue, Component, Prop } from 'vue-property-decorator';
+
+//TODO replace emit with @ syntax
+@Component
+export default class Button extends Vue {
+
+  @Prop(String) title!: string
+  @Prop({default: 'blue'}) color!: string
+
+  onClick(){
+      this.$emit('click');
   }
-};
+  
+}
 </script>
 
 <style scoped lang="sass">
