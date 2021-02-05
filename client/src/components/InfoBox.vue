@@ -16,11 +16,14 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "InfoBox",
-  props: ['systemInfo']
-};
+<script lang="ts">
+
+import { Vue, Component, Prop } from 'vue-property-decorator';
+
+@Component
+export default class InfoBox extends Vue {
+  @Prop() readonly systemInfo!: {memUsed: number, totalMem: number, cpuUsage: number}
+}
 </script>
 
 <style scoped lang="sass">
