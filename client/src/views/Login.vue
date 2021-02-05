@@ -33,44 +33,38 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
 
-import Header from "@/components/Header";
+import Header from "@/components/Header.vue";
 import passwordHash from 'password-hash';
 
-export default {
-  name: "Login",
+@Component({
   components: {
     Header
-  },
-  data() {
-    return {
-      input: {
-        username: "",
-        password: ""
-      }
-    };
-  },
-  methods: {
-    passKeyDown(event){
-      if(event.key === 'Enter') {
-        this.login();
-      }
-    },
-    login() {
+  }
+})
+export default class Login extends Vue{
+  input = {username: "", password: ""}
 
-      this.$store.dispatch('authenticate', {
-        user: this.input.username,
-        passHash: passwordHash.generate(this.input.password)
-      }).then(() => {
-        this.$router.push('/');
-      }, () => {
-        console.log('incorrect pass');
-      });
-
+  passKeyDown(event: KeyboardEvent){
+    if(event.key === 'Enter') {
+      this.login();
     }
   }
-};
+
+  login() {
+    this.$store.dispatch('authenticate', {
+      user: this.input.username,
+      passHash: passwordHash.generate(this.input.password)
+    }).then(() => {
+      this.$router.push('/');
+    }, () => {
+      console.log('incorrect pass');
+    });
+  }
+
+}
 </script>
 
 <style scoped lang="sass">
