@@ -12,7 +12,7 @@ export default class DownloadUtils {
 
     createDownload(filePath: string): Promise<string> {
     
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             // Check the existence of the file
             if (!fs.existsSync(filePath)) return;
         
@@ -28,7 +28,7 @@ export default class DownloadUtils {
         });
     }
 
-    getDownload(token: string){
+    getDownload(token: string): Promise<string>{
         return new Promise<string>((resolve, reject) => {
             if (token in this.downloadTokens){
                 const download = this.downloadTokens[token];

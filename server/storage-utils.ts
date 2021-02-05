@@ -3,7 +3,7 @@ import { exec } from "child_process";
 import zipper from 'zip-a-folder';
 
 
-export function zip(path: string) {
+export function zip(path: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
 
         const zippath = path+".zip";
@@ -14,7 +14,7 @@ export function zip(path: string) {
     });
 }
 
-export function encodeAll(folder: string) {
+export function encodeAll(folder: string): Promise<void> {
     return new Promise<void>(((resolve, reject) => {
 
         folder = folder+"/";
@@ -81,7 +81,7 @@ export function encodeAll(folder: string) {
     }));
 }
 
-export function deleteWav(folder: string){
+export function deleteWav(folder: string): Promise<void>{
     return new Promise<void>(((resolve, reject) => {
         folder = folder+"/";
 
@@ -119,8 +119,8 @@ export function deleteWav(folder: string){
     }));
 }
 
-export default function store(folder: string) {
-    return new Promise<void>(((resolve, reject) => {
+export default function store(folder: string): Promise<void> {
+    return new Promise<void>(((resolve) => {
         encodeAll(folder).then(() => {
             console.log('converting done');
             deleteWav(folder).then(() => {

@@ -6,14 +6,14 @@ export default class RecordingsManager{
 
     recordings: {[key: string]: {name: string, created: Date, processed: boolean}} = {}
     recordingDirectory: string
-    onUpdate: Function
+    onUpdate: {(): void}
 
-    constructor(recordingDirectory: string, onUpdate: Function){
+    constructor(recordingDirectory: string, onUpdate: {(): void}){
         this.recordingDirectory = recordingDirectory+"/";
         this.onUpdate = onUpdate;
     }
 
-    toClient(){
+    toClient(): {name: string, created: Date, processed: boolean}[]{
         //TODO return recordings without .zip extension
         let recordings: {name: string, created: Date, processed: boolean}[] = [];
         Object.values(this.recordings).forEach((recording) => {
@@ -32,11 +32,11 @@ export default class RecordingsManager{
         return(min);
     }
 
-    readDirectories(zipFolders = true){
+    readDirectories(zipFolders = true): Promise<{[key: string]: {name: string, created: Date, processed: boolean}}>{
         return new Promise(((resolve, reject) => {
             fs.readdir(this.recordingDirectory, (err, files) => {
                 if (err != null){
-                    console.log(`There was an error reading the recording directory: ${err}`);
+                    console.log(`There was an error reading the recording directory: ${err.message}`);
                     reject(err);
                     return;
                 }
