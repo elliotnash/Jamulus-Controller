@@ -62,10 +62,7 @@ export default class Panel extends Vue {
     this.$store.commit('setAuthentication', false);
     this.$router.push('/login');
   }
-
-  onRecordToggle(){
-    this.$store.dispatch('emitRecordToggle', !this.$store.state.recordingState);
-  }
+  
 }
 </script>
 

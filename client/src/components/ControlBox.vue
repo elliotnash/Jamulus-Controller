@@ -5,7 +5,7 @@
         <span class="boxtitle">TOGGLE RECORDING STATE</span>
       </div>
       <div class="right">
-        <button slot="pure" onselectstart="return false;" id="toggle-record" @click="$emit('recordToggle',$event)"
+        <button slot="pure" onselectstart="return false;" id="toggle-record" @click="onRecordToggle()"
                 :class="recordingState ? 'redbtn' : 'bluebtn'" v-wave
                 v-text="recordingState ? 'STOP RECORDING' : 'START RECORDING'" />
       </div>
@@ -33,32 +33,30 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 
-import Vue from 'vue';
-import VWave from 'v-wave';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
-Vue.use(VWave, {
-  color: '#2E3440',
-  startingOpacity: 0.5,
-  easing: 'ease-out',
-});
+@Component
+export default class ControlBox extends Vue {
 
+  @Prop(Boolean) recordingState!: boolean
 
-export default {
-  name: "ControlBox",
-  props: {
-    recordingState: Boolean
-  },
-  methods: {
-    newRecording(event){
-      console.log(event);
-    },
-    refreshRecordings(event){
-      console.log(event);
-    }
+  newRecording(event: Event){
+    //TODO implement
+    console.log(event);
   }
-};
+
+  refreshRecordings(event: Event){
+    //TODO implement
+    console.log(event);
+  }
+
+  onRecordToggle(){
+    this.$store.dispatch('emitRecordToggle', !this.$store.state.recordingState);
+  }
+
+}
 </script>
 
 <style scoped lang="sass">
