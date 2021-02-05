@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import io from 'socket.io-client'
-const FileSaver = require('file-saver');
+import FileSaver from 'file-saver';
+import VueCookies from 'vue-cookies';
 
 Vue.use(Vuex)
-Vue.use(require('vue-cookies'))
+Vue.use(VueCookies);
 
 const store = new Vuex.Store({
   state: {
@@ -12,10 +13,7 @@ const store = new Vuex.Store({
     credentials: null,
     recordingState: false,
     systemInfo: {},
-    recordings: [],
-    dialogs: {
-      file: true
-    }
+    recordings: []
   },
   mutations: {
     setAuthentication(state, status) {
@@ -43,9 +41,6 @@ const store = new Vuex.Store({
     },
     setRecordings(state, data){
       state.recordings = data;
-    },
-    setDialog(state, dialog, status) {
-      state.dialogs[dialog] = status;
     }
   },
   actions: {
@@ -55,7 +50,7 @@ const store = new Vuex.Store({
       })
     },
     authenticate(state, credentials){
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
 
         if (credentials == null || credentials.user == null || credentials.passHash == null){
           console.log('null credentials')
@@ -63,11 +58,11 @@ const store = new Vuex.Store({
           return;
         }
 
-        socket.emit('authenticate', credentials, (allowed) => {
+        socket.emit('authenticate', credentials, (allowed: boolean) => {
           if(allowed) {
             store.commit('setCredentials', credentials)
             console.log(credentials)
-            console.log(state.credentials)
+            console.log(state.state.credentials)
             store.commit('setAuthentication', true);
             resolve()
           } else {
@@ -78,8 +73,8 @@ const store = new Vuex.Store({
 
     },
     downloadFile(state, file){
-      return new Promise((resolve, reject) => {
-        socket.emit('DOWNLOAD_FILE', file, (uri) => {
+      return new Promise<void>((resolve, reject) => {
+        socket.emit('DOWNLOAD_FILE', file, (uri: string) => {
           //first callback is on receive
           console.log('server received download request');
 
@@ -90,13 +85,13 @@ const store = new Vuex.Store({
       })
     },
     renameFile(state, data){
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         socket.emit('RENAME_FILE', data);
         resolve();
       })
     },
     deleteFile(state, file){
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         socket.emit('DELETE_FILE', file);
         resolve();
       })
@@ -111,20 +106,22 @@ export default store
 
 let host = window.location.host;
 //let host = '192.168.0.196:3080'
-let socket = io(host);
+let socket = io.io(host);
 
-socket.on('RECORD_TOGGLE', (data) => {
+//FIXME I really don't want to do types rn
+
+socket.on('RECORD_TOGGLE', (data: any) => {
   console.log('Record state updated')
   store.commit('setRecordingState', data.newState)
   console.log(store.state.recordingState)
 });
 
-socket.on('RECORDINGS_UPDATE', (data) => {
+socket.on('RECORDINGS_UPDATE', (data: any) => {
   console.log(data)
   store.commit('setRecordings', data);
 })
 
-socket.on('SYSTEM_INFO', (data) => {
+socket.on('SYSTEM_INFO', (data: any) => {
   store.commit('setSystemInfo', data)
 });
 

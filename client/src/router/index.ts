@@ -1,5 +1,6 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+// eslint-disable-next-line no-unused-vars
+import VueRouter, { Route } from 'vue-router'
 import store from '@/store/index'
 
 Vue.use(VueRouter)
@@ -8,8 +9,8 @@ const routes = [
   {
     path: '*',
     name: 'Panel',
-    component: () => import('@/views/Panel'),
-    beforeEnter: (to, from, next) => {
+    component: () => import('@/views/Panel.vue'),
+    beforeEnter: (to: Route, from: Route, next: {(path?: string): void}) => {
       //authentication to prevent loading panel when not logged in
       //fetch credentials from cookie to see if can resume session
       store.commit("fetchCredentials")
