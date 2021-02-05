@@ -5,6 +5,10 @@ import store from '@/store/index'
 
 Vue.use(VueRouter)
 
+//TODO eslint
+//TODO proper store
+//TODO use typescript in vue files :)
+
 const routes = [
   {
     path: '*',
