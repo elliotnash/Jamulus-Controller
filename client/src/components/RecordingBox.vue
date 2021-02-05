@@ -8,19 +8,20 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 
-import RecordingItem from "@/components/RecordingItem";
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
-export default {
-  name: "RecordingBox",
-  components: {
-    RecordingItem
-  },
-  props: ['recordings'],
-  created() {
-  }
-};
+import RecordingItem from "@/components/RecordingItem.vue";
+
+@Component({components: {
+  RecordingItem
+}})
+export default class RecordingBox extends Vue {
+  //FIXME ahhhhhh
+  @Prop() recordings!: {}[]
+
+}
 </script>
 
 <style scoped lang="sass">
