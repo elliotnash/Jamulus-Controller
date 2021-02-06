@@ -50,11 +50,11 @@ const store = new Vuex.Store({
       });
     },
     authenticate(state, credentials){
-      return new Promise<void>((resolve, reject) => {
+      return new Promise<boolean>((resolve, reject) => {
 
         if (credentials == null || credentials.user == null || credentials.passHash == null){
           console.log('null credentials');
-          reject();
+          reject(false);
           return;
         }
 
@@ -64,10 +64,8 @@ const store = new Vuex.Store({
             console.log(credentials);
             console.log(state.state.credentials);
             store.commit('setAuthentication', true);
-            resolve();
-          } else {
-            reject();
           }
+          resolve(allowed);
         });
       });
 
