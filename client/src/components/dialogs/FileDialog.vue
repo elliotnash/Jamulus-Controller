@@ -32,61 +32,59 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 
-import Button from '../parts/Button';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
-export default {
-  name: "InfoBox",
-  props: {
-    recording: {}
-  },
-  components: {
-    Button
-  },
-  data() {
-    return {
-      newname: "",
-      show: false
-    };
-  },
-  methods: {
-    onClick(){
-    },
-    passKeyDown(event){
-      if(event.key === 'Enter') {
-        this.renameFile();
-      }
-    },
-    close(){
-      this.show = false;
-      //wait for animation to set dialog as closed
-      setTimeout(() => {
-        this.$emit('close');
-      }, 200);
-      
-    },
-    downloadFile(){
-      this.$store.dispatch('downloadFile', this.recording.name);
-      this.close();
-    },
-    renameFile(){
-      console.log(this.newname);
-      this.$store.dispatch('renameFile', {oldname: this.recording.name, newname: this.newname});
-      this.close();
-    },
-    deleteFile(){
-      this.$store.dispatch('deleteFile', this.recording.name);
-      this.close();
+import Button from '../parts/Button.vue';
+
+
+@Component({components: {
+  Button
+}})
+export default class FileDialog extends Vue {
+
+  @Prop() recording!: {name: string, created: Date, processed: boolean}
+
+  newname = ""
+  show = false
+    
+  onClick(){
+  }
+  passKeyDown(event: KeyboardEvent){
+    if(event.key === 'Enter') {
+      this.renameFile();
     }
-  },
+  }
+  close(){
+    this.show = false;
+    //wait for animation to set dialog as closed
+    setTimeout(() => {
+      this.$emit('close');
+    }, 200);
+    
+  }
+  downloadFile(){
+    this.$store.dispatch('downloadFile', this.recording.name);
+    this.close();
+  }
+  renameFile(){
+    console.log(this.newname);
+    this.$store.dispatch('renameFile', {oldname: this.recording.name, newname: this.newname});
+    this.close();
+  }
+  deleteFile(){
+    this.$store.dispatch('deleteFile', this.recording.name);
+    this.close();
+  }
+
   created() {
     this.newname= this.recording.name;
-  },
+  }
   mounted() {
     this.show = true;
   }
-};
+}
 </script>
 
 <style scoped lang="sass">

@@ -20,7 +20,6 @@ export default class Button extends Vue {
   onClick(){
       this.$emit('click');
   }
-  
 }
 </script>
 
