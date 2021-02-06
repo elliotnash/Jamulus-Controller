@@ -23,7 +23,7 @@
               <input class="inputbox" type="password" name="password" v-model="input.password" @keydown="passKeyDown($event)" placeholder="Password" />
             </div>
             <div class="submitfeild">
-              <button v-wave onselectstart="return false;" id="logoutbtn" class="submitbtn" @click="login()">Submit</button>
+              <Button id="logoutbtn" :fontSize="14" @click="login()" :title="'Submit'"/>
             </div>
             <div class="spacer"/>
           </div>
@@ -38,11 +38,13 @@
 import { Component, Vue } from 'vue-property-decorator';
 
 import Header from "@/components/Header.vue";
+import Button from '@/components/parts/Button.vue';
 import passwordHash from 'password-hash';
 
 @Component({
   components: {
-    Header
+    Header,
+    Button
   }
 })
 export default class Login extends Vue{

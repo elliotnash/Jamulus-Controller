@@ -1,14 +1,14 @@
 <template lang="html">
   <div class="div">
 
-    <button v-wave :style="{ '--font-size': fontSize+'px'}" onselectstart="return false;" id="logoutbtn" :class="color" @click="onClick()" v-text="title" ></button>
+    <button v-wave :style="{ '--font-size': fontSize+'px'}" onselectstart="return false;" id="logoutbtn" :class="color" @click="click()" v-text="title" ></button>
     
   </div>
 </template>
 
 <script lang="ts">
 
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 
 //TODO replace emit with decorator syntax
 @Component
@@ -18,9 +18,8 @@ export default class Button extends Vue {
   @Prop({default: 'blue'}) color!: string
   @Prop({default: 13}) fontSize!: number
 
-  onClick(){
-    this.$emit('click');
-  }
+  @Emit() click(){}
+
 }
 </script>
 
