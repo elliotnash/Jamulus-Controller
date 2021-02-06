@@ -5,7 +5,7 @@
       <div v-if="show" class="shader"/>
     </transition>
 
-    <div @mousedown.left="close()" class="fullpage">
+    <div @mousedown.left="startClose()" class="fullpage">
       <transition name="scale">
         <div v-if="show" class="dialogdiv">
           <div @mousedown.left.stop="onClick()" class="dialogbox">
@@ -34,7 +34,7 @@
 
 <script lang="ts">
 
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 
 import Button from '../parts/Button.vue';
 
@@ -56,14 +56,16 @@ export default class FileDialog extends Vue {
       this.renameFile();
     }
   }
-  close(){
+
+  startClose(){
     this.show = false;
     //wait for animation to set dialog as closed
     setTimeout(() => {
-      this.$emit('close');
+      this.close();
     }, 200);
-    
   }
+  @Emit() close(){}
+
   downloadFile(){
     this.$store.dispatch('downloadFile', this.recording.name);
     this.close();

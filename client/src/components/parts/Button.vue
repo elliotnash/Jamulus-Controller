@@ -10,7 +10,6 @@
 
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 
-//TODO replace emit with decorator syntax
 @Component
 export default class Button extends Vue {
 
