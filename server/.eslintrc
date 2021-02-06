@@ -12,7 +12,8 @@
     "rules": {
       "@typescript-eslint/no-var-requires": "warn",
       "semi": [2, "always"],
-      "@typescript-eslint/no-floating-promises": "off"
+      "@typescript-eslint/no-floating-promises": "off",
+      "indent": ["warn", 2]
     },
     "parserOptions": {
       "project": "./tsconfig.json"
