@@ -5,11 +5,6 @@ import store from '@/store/index';
 
 Vue.use(VueRouter);
 
-//TODO eslint
-//TODO proper store
-//TODO use typescript in vue files :)
-//TODO use button props instead of hard coding button
-
 const routes = [
   {
     path: '*',

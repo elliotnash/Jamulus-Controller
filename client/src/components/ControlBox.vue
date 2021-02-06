@@ -5,9 +5,9 @@
         <span class="boxtitle">TOGGLE RECORDING STATE</span>
       </div>
       <div class="right">
-        <button slot="pure" onselectstart="return false;" id="toggle-record" @click="onRecordToggle()"
-                :class="recordingState ? 'redbtn' : 'bluebtn'" v-wave
-                v-text="recordingState ? 'STOP RECORDING' : 'START RECORDING'" />
+        <Button @click="onRecordToggle()"
+                :color="recordingState ? 'red' : 'blue'"
+                :title="recordingState ? 'STOP RECORDING' : 'START RECORDING'" />
       </div>
     </div>
     
@@ -16,8 +16,7 @@
         <span class="boxtitle">REFRESH RECORDING LIST</span>
       </div>
       <div class="right">
-        <button slot="pure" onselectstart="return false;" id="refresh-recordings" @click="refreshRecordings($event)"
-                class="bluebtn" v-wave >REFRESH</button>
+        <Button @click="refreshRecordings()" color="blue" title="REFRESH" />
       </div>
     </div>
     <div class="itemdiv">
@@ -25,8 +24,7 @@
         <span class="boxtitle">RESTART JAMULUS</span>
       </div>
       <div class="right">
-        <button slot="pure" onselectstart="return false;" id="restart-jamulus" @click="restartJamulus($event)"
-                class="orangebtn" v-wave >RESTART</button>
+        <Button @click="restartJamulus()" color="orange" title="RESTART" />
       </div>
     </div>
     <div class="spacer"></div>
@@ -37,19 +35,21 @@
 
 import { Vue, Component, Prop } from 'vue-property-decorator';
 
-@Component
+import Button from '@/components/parts/Button.vue';
+
+@Component({components: {
+  Button
+}})
 export default class ControlBox extends Vue {
 
   @Prop(Boolean) recordingState!: boolean
 
-  newRecording(event: Event){
+  restartJamulus(){
     //TODO implement
-    console.log(event);
   }
 
-  refreshRecordings(event: Event){
+  refreshRecordings(){
     //TODO implement
-    console.log(event);
   }
 
   onRecordToggle(){
@@ -85,43 +85,6 @@ div
     flex-grow: 1
     justify-content: center
     align-content: center
-
-button
-  &.bluebtn
-    margin: auto
-    border: none
-    background-color: #88C0D0
-    border-radius: 6px
-    font-size: 13px
-    font-family: ABeeZee, sans-serif
-    color: #4C566A
-    padding: 10px
-    outline: none
-
-    -webkit-touch-callout: none
-    -webkit-user-select: none
-    -khtml-user-select: none
-    -moz-user-select: none
-    -ms-user-select: none
-    -o-user-select: none
-    user-select: none
-
-    &:hover
-      background-color: #8FBCBB
-
-  &.redbtn
-    @extend button.bluebtn
-    background-color: #BF616A
-
-    &:hover
-      background-color: #c46e77
-
-  &.orangebtn
-    @extend button.bluebtn
-    background-color: #D08770
-
-    &:hover
-      background-color: #da9e8b
 
 span.boxtitle
   margin: auto

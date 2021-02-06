@@ -129,6 +129,5 @@ socket.on("connect", () => {
   //attempt reauthenticate on connect, mainly for mobile browsers who suspend socket io sessions
   store.dispatch('authenticate', store.state.credentials).then(() => {
     console.log('socket reauthenticated');
-  }, () => {
   });
 });

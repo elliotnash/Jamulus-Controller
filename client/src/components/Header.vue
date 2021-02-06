@@ -5,7 +5,7 @@
         <span id="title" class="title">{{ displayName }}</span>
       </div>
       <div v-if="showLogOut" class="buttondiv">
-        <button v-wave onselectstart="return false;" id="logoutbtn" class="logoutbtn" @click="clickLogOut()">Log Out</button>
+        <Button id="logoutbtn" @click="clickLogOut()" title="Log Out" />
       </div>
     </div>
   </div>
@@ -13,8 +13,11 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import Button from '@/components/parts/Button.vue';
 
-@Component
+@Component({components:{
+  Button
+}})
 export default class Header extends Vue {
   @Prop(Number) readonly displayName!: string
   @Prop(Boolean) readonly showLogOut!: boolean
@@ -63,29 +66,6 @@ div
     height: 100%
     width: auto
     float: right
-
-button.logoutbtn
-  border: none
-  background-color: #88C0D0
-  border-radius: 6px
-  font-size: 14px
-  font-family: ABeeZee, sans-serif
-  color: #4C566A
-  padding: 10px
-  outline: none
-
-  -webkit-touch-callout: none
-  -webkit-user-select: none
-  -khtml-user-select: none
-  -moz-user-select: none
-  -ms-user-select: none
-  -o-user-select: none
-  user-select: none
-
-  &:hover
-    background-color: #8FBCBB
-
-
 
 span.title
   font-family: ABeeZee, sans-serif

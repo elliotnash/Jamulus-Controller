@@ -16,11 +16,11 @@
               <div class="spacer"/>
               <div class="itemdiv">
                 <input class="inputbox" type="text" @keydown="passKeyDown($event)" v-model="newname" />
-                <Button @click="renameFile()" :title="'RENAME'" />
+                <Button @click="renameFile()" :title="'RENAME'" :fontSize="14" />
               </div>
               <div class="itemdiv">
-                <Button @click="deleteFile()" :title="'DELETE'"  :color="'orange'" />
-                <Button @click="downloadFile()" :title="'DOWNLOAD'"/>
+                <Button @click="deleteFile()" :title="'DELETE'"  :color="'orange'" :fontSize="14" />
+                <Button @click="downloadFile()" :title="'DOWNLOAD'" :fontSize="14" />
               </div>
               <div class="spacer"/>
             </div>
@@ -46,7 +46,7 @@ export default class FileDialog extends Vue {
 
   @Prop() recording!: {name: string, created: Date, processed: boolean}
 
-  newname = ""
+  newname = this.recording.name
   show = false
     
   onClick(){
@@ -77,14 +77,12 @@ export default class FileDialog extends Vue {
     this.$store.dispatch('deleteFile', this.recording.name);
     this.close();
   }
-
-  created() {
-    this.newname= this.recording.name;
-  }
+  
   mounted() {
     this.show = true;
   }
 }
+//TODO Component for text boxes?
 </script>
 
 <style scoped lang="sass">
@@ -148,6 +146,7 @@ div
   
   &.spacer
     height: 40%
+
 
 input.inputbox
   border: none

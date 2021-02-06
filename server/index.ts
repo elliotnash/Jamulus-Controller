@@ -25,6 +25,8 @@ const recordingsManager = new RecordingsManager(config.recordingDirectory, () =>
   updateRecordingList();
 });
 
+//TODO really need to figure out file lock - the renaming system right now is probably super
+//Potentially add a socket channel for closing dialog remotely? or at least updating info (maybe unneccesarry)
 //TODO setup nodemon to allow auto reload for dev
 //TODO add resync button to sync recording state
 //TODO warning prompt when deleting file (client)
