@@ -58,10 +58,12 @@ export default class Login extends Vue{
     this.$store.dispatch('authenticate', {
       user: this.input.username,
       passHash: passwordHash.generate(this.input.password)
-    }).then(() => {
-      this.$router.push('/');
-    }, () => {
-      console.log('incorrect pass');
+    }).then((allowed: boolean) => {
+      if (allowed){
+        this.$router.push('/');
+      } else {
+        console.log('Incorrect pass');
+      }
     });
   }
 
