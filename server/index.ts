@@ -28,7 +28,6 @@ const recordingsManager = new RecordingsManager(config.recordingDirectory, () =>
 //TODO setup nodemon to allow auto reload for dev
 //TODO add resync button to sync recording state
 //TODO warning prompt when deleting file (client)
-//TODO typescript on the client?
 //FIXME Clicking delete on dialog box instantly closes dialog
 
 app.use(express.static(path.join(__dirname, './client')));

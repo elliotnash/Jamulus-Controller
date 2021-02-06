@@ -108,9 +108,9 @@ let host = window.location.host;
 //let host = '192.168.0.196:3080'
 let socket = io.io(host);
 
-//FIXME I really don't want to do types rn
+//TODO it'd be pretty pog to use decorator syntax for the store :P
 
-socket.on('RECORD_TOGGLE', (data: any) => {
+socket.on('RECORD_TOGGLE', (data: {newState: boolean}) => {
   console.log('Record state updated');
   store.commit('setRecordingState', data.newState);
   console.log(store.state.recordingState);
@@ -121,7 +121,7 @@ socket.on('RECORDINGS_UPDATE', (data: {name: string, created: Date, processed: b
   store.commit('setRecordings', data);
 });
 
-socket.on('SYSTEM_INFO', (data: any) => {
+socket.on('SYSTEM_INFO', (data: {cpuUsage: number, totalMem: number, memUsed: number}) => {
   store.commit('setSystemInfo', data);
 });
 
