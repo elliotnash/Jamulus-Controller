@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 import Button from '@/components/parts/Button.vue';
 
 @Component({components:{
@@ -22,9 +22,8 @@ export default class Header extends Vue {
   @Prop(Number) readonly displayName!: string
   @Prop(Boolean) readonly showLogOut!: boolean
 
-  clickLogOut() {
-    this.$emit('clickLogOut');
-  }
+  @Emit() clickLogOut(){}
+
 }
 </script>
 

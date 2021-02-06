@@ -1,6 +1,6 @@
 <template>
   <div class="background">
-    <Header @clickLogOut="onLogOutClick()" displayName="Jamulus Recordings" :show-log-out="true"/>
+    <Header @click-log-out="onLogOutClick()" displayName="Jamulus Recordings" :show-log-out="true"/>
     <div class="mainbox">
       <div class="leftpanel">
         <div class="itemdiv">
@@ -59,6 +59,7 @@ Vue.use(VWave, {
 export default class Panel extends Vue {
 
   onLogOutClick(){
+    console.log('logout clicked');
     this.$store.commit('setAuthentication', false);
     this.$router.push('/login');
   }
