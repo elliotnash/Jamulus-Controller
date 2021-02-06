@@ -45,30 +45,6 @@
     "vue-cookies": "^1.7.4",
     "vue-template-compiler": "^2.6.11"
   },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended",
-      "@vue/typescript"
-    ],
-    "parserOptions": {
-      "parser": "@typescript-eslint/parser"
-    },
-    "rules": {
-      "vue/no-unused-components": "warn",
-      "no-unused-vars": "warn",
-      "@typescript-eslint/no-var-requires": "warn",
-      "semi": [
-        2,
-        "always"
-      ],
-      "@typescript-eslint/no-floating-promises": "off"
-    }
-  },
   "browserslist": [
     "> 1%",
     "last 2 versions",

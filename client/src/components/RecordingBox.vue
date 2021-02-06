@@ -18,7 +18,7 @@ import RecordingItem from "@/components/RecordingItem.vue";
   RecordingItem
 }})
 export default class RecordingBox extends Vue {
-  
+
   @Prop() recordings!: {name: string, created: Date, processed: boolean}[]
 
 }
