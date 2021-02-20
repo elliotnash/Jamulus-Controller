@@ -19,7 +19,7 @@ import Button from '@/components/parts/Button.vue';
   Button
 }})
 export default class Header extends Vue {
-  @Prop(Number) readonly displayName!: string
+  @Prop(String) readonly displayName!: string
   @Prop(Boolean) readonly showLogOut!: boolean
 
   @Emit() clickLogOut(){}

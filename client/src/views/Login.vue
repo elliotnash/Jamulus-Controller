@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="background">
-      <Header displayName="Jamulus Recordings" showLogOut="true"/>
+      <Header displayName="Jamulus Recordings" :showLogOut="false"/>
       <div class="mainbox">
         <div class="itemdiv">
           <div class="box">
@@ -40,6 +40,13 @@ import { Component, Vue } from 'vue-property-decorator';
 import Header from "@/components/Header.vue";
 import Button from '@/components/parts/Button.vue';
 import passwordHash from 'password-hash';
+
+import VWave from 'v-wave';
+Vue.use(VWave, {
+  color: '#2E3440',
+  startingOpacity: 0.5,
+  easing: 'ease-out',
+});
 
 @Component({
   components: {
