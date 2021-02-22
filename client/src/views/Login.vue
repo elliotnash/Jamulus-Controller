@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-//TODO Animate failed login (+message)
+//TODO log out when login page is visted
 import { Component, Vue } from 'vue-property-decorator';
 
 import Header from "@/components/Header.vue";
