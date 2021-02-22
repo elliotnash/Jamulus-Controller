@@ -78,7 +78,7 @@ export default class FileDialog extends Vue {
     this.show = true;
   }
 }
-//TODO Component for text boxes?
+
 </script>
 
 <style scoped lang="sass">

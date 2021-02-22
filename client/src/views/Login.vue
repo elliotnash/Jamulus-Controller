@@ -35,7 +35,6 @@
 </template>
 
 <script lang="ts">
-//TODO log out when login page is visted
 import { Component, Vue } from 'vue-property-decorator';
 
 import Header from "@/components/Header.vue";
@@ -81,6 +80,11 @@ export default class Login extends Vue{
         break;
       }
     });
+  }
+
+  created() {
+    //log out
+    this.$store.commit('setAuthentication', false);
   }
 
 }

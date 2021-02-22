@@ -106,7 +106,7 @@ let host = window.location.host;
 //let host = '192.168.0.196:3080';
 let socket = io.io(host);
 
-//TODO it'd be pretty pog to use decorator syntax for the store :P
+//TODO it'd be pretty pog to use decorator syntax for the store :P maybe never gonna happen ahahah:(
 
 socket.on('RECORD_TOGGLE', (data: {newState: boolean}) => {
   console.log('Record state updated');
