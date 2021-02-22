@@ -50,7 +50,7 @@ const store = new Vuex.Store({
       });
     },
     authenticate(state, credentials){
-      return new Promise<boolean>((resolve, reject) => {
+      return new Promise<string>((resolve, reject) => {
 
         if (credentials == null || credentials.user == null || credentials.passHash == null){
           console.log('null credentials');
@@ -58,8 +58,8 @@ const store = new Vuex.Store({
           return;
         }
 
-        socket.emit('authenticate', credentials, (allowed: boolean) => {
-          if(allowed) {
+        socket.emit('authenticate', credentials, (allowed: string) => {
+          if(allowed == 'success') {
             store.commit('setCredentials', credentials);
             console.log(credentials);
             console.log(state.state.credentials);

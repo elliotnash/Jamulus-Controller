@@ -14,14 +14,14 @@
                 <span class="inputtitle">Username</span>
               </div>
               <!-- <input class="inputbox" type="email" name="username" v-model="input.username" placeholder="Username" /> -->
-              <TextBox type="email" placeholder="Username"  v-model="input.username" />
+              <TextBox type="email" placeholder="Username"  v-model="input.username" @created="registerUsername" />
             </div>
             <div class="smallspacer"/>
             <div class="inputfeild">
               <div class="textdiv">
                 <span class="inputtitle">Password</span>
               </div>
-              <TextBox type="password" placeholder="Password" v-model="input.password" @enter="login()" @created="registerShake" />
+              <TextBox type="password" placeholder="Password" v-model="input.password" @enter="login()" @created="registerPassword" />
             </div>
             <div class="submitfeild">
               <Button id="logoutbtn" :fontSize="14" @click="login()" :title="'Submit'"/>
@@ -60,20 +60,25 @@ Vue.use(VWave, {
 export default class Login extends Vue{
   input = {username: "", password: ""}
 
-  shakePassword = () => {};
-  registerShake(callback: {(): void}) {
-    this.shakePassword = callback;
-  }
+  shakeEvent = {username: () => {}, password: () => {}};
+  registerUsername(callback: {(): void}) {this.shakeEvent.username = callback;}
+  registerPassword(callback: {(): void}) {this.shakeEvent.password = callback;}
 
   login() {
     this.$store.dispatch('authenticate', {
       user: this.input.username,
       passHash: passwordHash.generate(this.input.password)
-    }).then((allowed: boolean) => {
-      if (allowed){
+    }).then((allowed: string) => {
+      switch (allowed) {
+      case 'success':
         this.$router.push('/');
-      } else {
-        this.shakePassword();
+        break;
+      case 'username':
+        this.shakeEvent.username();
+        break;
+      case 'password':
+        this.shakeEvent.password();
+        break;
       }
     });
   }

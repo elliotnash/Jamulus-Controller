@@ -186,9 +186,9 @@ io.on('connection', (socket: SocketIO.Socket) => {
     socket.emit('RECORDINGS_UPDATE', recordingsManager.toClient());
   }
 
-  socket.on('authenticate', (data: {user: string, passHash: string}, callback: {(authenticated: boolean): void}) => {
+  socket.on('authenticate', (data: {user: string, passHash: string}, callback: {(status: string): void}) => {
     if (data == null){
-      callback(false);
+      callback('');
       return;
     }
 
@@ -199,11 +199,13 @@ io.on('connection', (socket: SocketIO.Socket) => {
         //password match! return true
         //add socket to authenticated sockets
         addAuth();
-        callback(true);
-        return;
+        callback('success');
+      } else {
+        callback('password');
       }
+    } else {
+      callback('username');
     }
-    callback(false);
   });
 
   socket.on('RECORD_TOGGLE', (data: {newState: boolean}) => {
