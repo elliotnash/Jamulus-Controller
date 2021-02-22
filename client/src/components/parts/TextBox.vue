@@ -32,7 +32,9 @@ export default class Button extends Vue {
     console.log('animate event called');
     this.divClass.error = true;
     console.log(this.divClass);
-    //TODO reset shake when done
+    setTimeout(() => {
+      this.divClass.error = false;
+    }, 300);
   }
 
   @Emit()
