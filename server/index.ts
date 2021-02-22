@@ -18,7 +18,12 @@ import RecordingsManager from './recordings-manager';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const config = require('../config.json') as {port: string, users: {[key: string]: string}, systemdServiceName: string, recordingDirectory: string, downloadExpireTime: number};
 config.recordingDirectory = config.recordingDirectory+"/";
-const users = config.users;
+
+const users: {[key: string]: string} = {};
+for (const [key, value] of Object.entries(config.users)) {
+  users[key.toLowerCase()] = value;
+}
+
 
 const downloadUtils = new DownloadUtils(config.downloadExpireTime);
 const recordingsManager = new RecordingsManager(config.recordingDirectory, () => {
@@ -187,7 +192,8 @@ io.on('connection', (socket: SocketIO.Socket) => {
       return;
     }
 
-    if (data.user in config.users){
+    data.user = data.user.toLowerCase();
+    if (data.user in users){
       //user exists
       if (passwordHash.verify(users[data.user], data.passHash)){
         //password match! return true

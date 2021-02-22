@@ -21,10 +21,10 @@
               <div class="textdiv">
                 <span class="inputtitle">Password</span>
               </div>
-              <TextBox type="password" placeholder="Password" v-model="input.password" @enter="login()" />
+              <TextBox type="password" placeholder="Password" v-model="input.password" @enter="login()" @created="registerShake" />
             </div>
             <div class="submitfeild">
-              <Button id="logoutbtn" :fontSize="14" @click="login()" @created="registerShake" :title="'Submit'"/>
+              <Button id="logoutbtn" :fontSize="14" @click="login()" :title="'Submit'"/>
             </div>
             <div class="spacer"/>
           </div>
@@ -61,6 +61,9 @@ export default class Login extends Vue{
   input = {username: "", password: ""}
 
   shakePassword = () => {};
+  registerShake(callback: {(): void}) {
+    this.shakePassword = callback;
+  }
 
   login() {
     this.$store.dispatch('authenticate', {
@@ -70,7 +73,7 @@ export default class Login extends Vue{
       if (allowed){
         this.$router.push('/');
       } else {
-        console.log('Incorrect pass');
+        this.shakePassword();
       }
     });
   }
