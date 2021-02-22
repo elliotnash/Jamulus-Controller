@@ -6,6 +6,7 @@ export default class RecordingsManager{
 
   recordings: {[key: string]: {name: string, created: Date, processed: boolean}} = {}
   recordingDirectory: string
+  // this is a callback that need to be called to update the recordings list in the main thread
   onUpdate: {(): void}
 
   constructor(recordingDirectory: string, onUpdate: {(): void}){
@@ -14,7 +15,6 @@ export default class RecordingsManager{
   }
 
   toClient(): {name: string, created: Date, processed: boolean}[]{
-    //TODO return recordings without .zip extension
     let recordings: {name: string, created: Date, processed: boolean}[] = [];
     Object.values(this.recordings).forEach((recording) => {
       recordings.push({name: recording.name.slice(0, -4), created: recording.created, processed: recording.processed});
@@ -40,42 +40,52 @@ export default class RecordingsManager{
           reject(err);
           return;
         }
-        //TODO make this async for files in the folder, should be easy with promises (download-utils)
+
         //clear array
         this.recordings = {};
-
+        
+        //add each iteration as a promise to do async, then promise.all to join it back up
+        const promises: Promise<void>[] = [];
         files.forEach(file => {
-          //only include folders in index
-          const stats = fs.statSync(this.recordingDirectory+file);
-          if (file.slice(-4)=='.zip'){
-            this.recordings[file] = {name: file, created: this.getFirstTime(stats), processed: true};
-          } else {
-            if (zipFolders){
-              if(stats.isDirectory()){
-                //only do if hasn't already been zipped
-                const zipname = file+".zip";
-                if (!fs.existsSync(this.recordingDirectory+zipname)){
-                  //add object with processed set to true false
-                  this.recordings[zipname] = {name: zipname, created: this.getFirstTime(stats), processed: false};
-                  store(this.recordingDirectory+file).then(() => {
-                    this.recordings[zipname].processed = true;
-                    //make sure to call update again
-                    this.onUpdate();
-                  });
-                } else {
-                  //TODO should probably delete the folder, not quite wanting to do that now
-                }
+          promises.push(
+            new Promise((resolve) => {
+              //only include folders in index
+              const stats = fs.statSync(this.recordingDirectory+file);
+              // if file is a zip then add to the list, we're done
+              if (file.slice(-4)=='.zip'){
+                this.recordings[file] = {name: file, created: this.getFirstTime(stats), processed: true};
+              // if not then we have to process it if its a folder or delete it otherwise
               } else {
-                //delete file
-                fs.unlink(file);
+                if (zipFolders){
+                  if(stats.isDirectory()){
+                    //only do if hasn't already been zipped
+                    const zipname = file+".zip";
+                    if (!fs.existsSync(this.recordingDirectory+zipname)){
+                      //add object with processed set to true false
+                      this.recordings[zipname] = {name: zipname, created: this.getFirstTime(stats), processed: false};
+                      store(this.recordingDirectory+file).then(() => {
+                        this.recordings[zipname].processed = true;
+                        //make sure to call update again
+                        this.onUpdate();
+                      });
+                    } else {
+                      //TODO should probably delete the folder, not quite wanting to do that now
+                    }
+                  } else {
+                    fs.unlink(file);
+                  }
+                }
               }
-            }
-          }
+              resolve();
+            })
+          );
         });
-        //TODO read directories no longer updates recording list - implement in main loop
         //Posible implementation with callbacks
-        this.onUpdate();
-        resolve(this.recordings);
+        Promise.all(promises).then(() => {
+          this.onUpdate();
+          resolve(this.recordings);
+        });
+        
       });
     }));
   
