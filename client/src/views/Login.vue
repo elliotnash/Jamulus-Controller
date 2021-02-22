@@ -13,17 +13,18 @@
               <div class="textdiv">
                 <span class="inputtitle">Username</span>
               </div>
-              <input class="inputbox" type="email" name="username" v-model="input.username" placeholder="Username" />
+              <!-- <input class="inputbox" type="email" name="username" v-model="input.username" placeholder="Username" /> -->
+              <TextBox type="email" placeholder="Username"  v-model="input.username" />
             </div>
             <div class="smallspacer"/>
             <div class="inputfeild">
               <div class="textdiv">
                 <span class="inputtitle">Password</span>
               </div>
-              <input class="inputbox" type="password" name="password" v-model="input.password" @keydown="passKeyDown($event)" placeholder="Password" />
+              <TextBox type="password" placeholder="Password" v-model="input.password" @enter="login()" />
             </div>
             <div class="submitfeild">
-              <Button id="logoutbtn" :fontSize="14" @click="login()" :title="'Submit'"/>
+              <Button id="logoutbtn" :fontSize="14" @click="login()" @created="registerShake" :title="'Submit'"/>
             </div>
             <div class="spacer"/>
           </div>
@@ -39,6 +40,7 @@ import { Component, Vue } from 'vue-property-decorator';
 
 import Header from "@/components/Header.vue";
 import Button from '@/components/parts/Button.vue';
+import TextBox from '@/components/parts/TextBox.vue';
 import passwordHash from 'password-hash';
 
 import VWave from 'v-wave';
@@ -51,17 +53,14 @@ Vue.use(VWave, {
 @Component({
   components: {
     Header,
-    Button
+    Button,
+    TextBox
   }
 })
 export default class Login extends Vue{
   input = {username: "", password: ""}
 
-  passKeyDown(event: KeyboardEvent){
-    if(event.key === 'Enter') {
-      this.login();
-    }
-  }
+  shakePassword = () => {};
 
   login() {
     this.$store.dispatch('authenticate', {
@@ -171,40 +170,5 @@ span
     font-family: ABeeZee, sans-serif
     font-size: 18px
     color: #ECEFF4
-
-input.inputbox
-  border: none
-  width: auto
-  padding: 12px 20px
-  margin: 10px
-  box-sizing: border-box
-  border-radius: 10px
-  outline: none
-  background-color: #4C566A
-  color: #D8DEE9
-  box-shadow: 0 0 8px 8px #00000008
-
-button.submitbtn
-  margin: auto
-  border: none
-  background-color: #88C0D0
-  border-radius: 6px
-  font-size: 14px
-  font-family: ABeeZee, sans-serif
-  color: #4C566A
-  padding: 10px
-  outline: none
-  -webkit-touch-callout: none
-  -webkit-user-select: none
-  -khtml-user-select: none
-  -moz-user-select: none
-  -ms-user-select: none
-  -o-user-select: none
-  user-select: none
-  box-shadow: 0 0 8px 8px #00000008
-
-  &:hover
-    background-color: #8FBCBB
-
 
 </style>

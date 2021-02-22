@@ -1,5 +1,11 @@
 <template>
-  <input class="inputbox" type="password" name="password" v-model="input.password" @keydown="passKeyDown($event)" placeholder="Password" />
+  <div class="div">
+    <input class="inputbox2" :type="type" name="textbox"
+      :value="value" :placeholder="placeholder" 
+      @input="$emit('input', $event.target.value)"
+      @keydown="passKeyDown($event)"
+    />
+  </div>
 </template>
 
 <script lang=ts>
@@ -9,19 +15,34 @@ import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 @Component
 export default class Button extends Vue {
 
-  @Prop(String) title!: string
-  @Prop({default: 'blue'}) color!: string
-  @Prop({default: 13}) fontSize!: number
+  @Prop({default: ''}) placeholder!: string
+  @Prop({default: 'text'}) type!: string
+  @Prop({default: ''}) value!: string
 
-  @Emit() click(){}
+  passKeyDown(event: KeyboardEvent){
+    if(event.key === 'Enter') {
+      this.enter();
+    }
+  }
+
+  @Emit() enter(){}
+
+  created() {
+    
+  }
 
 }
 
 </script>
 
 <style scoped lang=sass>
+div.div
+  display: flex
+  flex-flow: column
+  flex-grow: 1
+  justify-content: center
 
-input.inputbox
+input.inputbox2
   border: none
   width: auto
   padding: 12px 20px
