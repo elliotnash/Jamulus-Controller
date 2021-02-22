@@ -51,12 +51,14 @@ export default class FileDialog extends Vue {
   newname = this.recording.name
   show = false
 
+  private timeout = 200;
+
   startClose(){
     this.show = false;
     //wait for animation to set dialog as closed
     setTimeout(() => {
       this.close();
-    }, 200);
+    }, this.timeout);
   }
   @Emit() close(){}
 
@@ -65,12 +67,15 @@ export default class FileDialog extends Vue {
     this.close();
   }
   renameFile(){
-    console.log(this.newname);
-    this.$store.dispatch('renameFile', {oldname: this.recording.name, newname: this.newname});
+    setTimeout(() => {
+      this.$store.dispatch('renameFile', {oldname: this.recording.name, newname: this.newname});
+    }, this.timeout);
     this.close();
   }
   deleteFile(){
-    this.$store.dispatch('deleteFile', this.recording.name);
+    setTimeout(() => {
+      this.$store.dispatch('deleteFile', this.recording.name);
+    }, this.timeout);
     this.close();
   }
   
