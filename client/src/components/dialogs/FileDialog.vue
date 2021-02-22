@@ -8,14 +8,14 @@
     <div @mousedown.left="startClose()" class="fullpage">
       <transition name="scale">
         <div v-if="show" class="dialogdiv">
-          <div @mousedown.left.stop="onClick()" class="dialogbox">
+          <div @mousedown.left.stop class="dialogbox">
             <div class="boxheader">
               <span class="boxtitle">Choose an action</span>
             </div>
             <div class="contentdiv">
               <div class="spacer"/>
               <div class="itemdiv">
-                <input class="inputbox" type="text" @keydown="passKeyDown($event)" v-model="newname" />
+                <TextBox type="text" v-model="newname" @enter="renameFile()" />
                 <Button @click="renameFile()" :title="'RENAME'" :fontSize="14" />
               </div>
               <div class="itemdiv">
@@ -37,10 +37,12 @@
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 
 import Button from '../parts/Button.vue';
+import TextBox from '../parts/TextBox.vue';
 
 
 @Component({components: {
-  Button
+  Button,
+  TextBox
 }})
 export default class FileDialog extends Vue {
 
@@ -48,14 +50,6 @@ export default class FileDialog extends Vue {
 
   newname = this.recording.name
   show = false
-    
-  onClick(){
-  }
-  passKeyDown(event: KeyboardEvent){
-    if(event.key === 'Enter') {
-      this.renameFile();
-    }
-  }
 
   startClose(){
     this.show = false;
@@ -148,19 +142,6 @@ div
   
   &.spacer
     height: 40%
-
-
-input.inputbox
-  border: none
-  width: auto
-  padding: 12px 20px
-  margin: 10px
-  box-sizing: border-box
-  border-radius: 10px
-  outline: none
-  background-color: #4C566A
-  color: #D8DEE9
-  box-shadow: 0 0 8px 8px #00000008
 
 .shaderfade-enter-active
   animation: fade-in 0.2s
