@@ -67,7 +67,9 @@ export default class FileDialog extends Vue {
     this.startClose();
   }
   renameFile(){
-    this.$store.dispatch('renameFile', {oldname: this.recording.name, newname: this.newname});
+    setTimeout(() => {
+      this.$store.dispatch('renameFile', {oldname: this.recording.name, newname: this.newname});
+    }, this.timeout);
     this.startClose();
   }
   deleteFile(){
