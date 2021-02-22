@@ -64,19 +64,17 @@ export default class FileDialog extends Vue {
 
   downloadFile(){
     this.$store.dispatch('downloadFile', this.recording.name);
-    this.close();
+    this.startClose();
   }
   renameFile(){
-    setTimeout(() => {
-      this.$store.dispatch('renameFile', {oldname: this.recording.name, newname: this.newname});
-    }, this.timeout);
-    this.close();
+    this.$store.dispatch('renameFile', {oldname: this.recording.name, newname: this.newname});
+    this.startClose();
   }
   deleteFile(){
     setTimeout(() => {
       this.$store.dispatch('deleteFile', this.recording.name);
     }, this.timeout);
-    this.close();
+    this.startClose();
   }
   
   mounted() {
