@@ -1,5 +1,8 @@
 <template lang="html">
   <div class="contentbox">
+
+    <Context/>
+
     <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.name"/>
 
     <span v-if="$store.state.recordings[0] == null" class="norecordings">No recordings, press start to start a recording</span>
@@ -13,9 +16,11 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 
 import RecordingItem from "@/components/RecordingItem.vue";
+import Context from "@/components/dialogs/Context.vue";
 
 @Component({components: {
-  RecordingItem
+  RecordingItem,
+  Context
 }})
 export default class RecordingBox extends Vue {
 

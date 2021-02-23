@@ -25,6 +25,7 @@ const routes = [
     }
   },
   {
+    //TODO redirect login page if cookies exist to force log out button ::))
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue')
