@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="contentbox">
 
-    <Context/>
+    <Context @created="registerContext" />
 
     <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.name"/>
 
@@ -25,6 +25,11 @@ import Context from "@/components/dialogs/Context.vue";
 export default class RecordingBox extends Vue {
 
   @Prop() recordings!: {name: string, created: Date, processed: boolean}[]
+
+  contextMenu: {open: {(x: number, y: number): void}, close: {(): void}} = {open: () => {}, close: () => {}};
+  registerContext(events: {open: {(x: number, y: number): void}, close: {(): void}}) {
+    this.contextMenu = events;
+  }
 
 }
 </script>
