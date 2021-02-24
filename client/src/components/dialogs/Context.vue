@@ -14,9 +14,9 @@ export default class Context extends Vue {
 
   show = false;
 
-  openMenu(x: number, y: number) {
-    this.x = x;
-    this.y = y;
+  openMenu(event: {x: number, y: number}) {
+    this.x = event.x;
+    this.y = event.y;
     this.show = true;
   }
 
@@ -44,6 +44,8 @@ div
     top: var(--y)
     right: calc( (100% - 150px) - var(--x) )
     bottom: calc( (100% - 150px) - var(--y) )
+
+    z-index: 10
 
 
 </style>

@@ -1,10 +1,11 @@
 <template>
   <div>
-    <div :class="recording.processed ? 'elementdiv' : 'elementdivdisabled'" v-wave  @click="itemClick()">
+    <div :class="recording.processed ? 'elementdiv' : 'elementdivdisabled'" 
+    v-wave @click="itemClick()" @contextmenu.prevent="context($event)">
       <div class="textdiv">
         <span class="boxtitle" >{{ recording.name }}</span>
       </div>
-      <div v-wave class="rightdiv">
+      <div v-wave class="rightdiv" @click.stop="context($event)">
         <font-awesome-icon class="icons" icon="ellipsis-h" />
       </div>
     </div>
@@ -14,7 +15,7 @@
 
 <script lang="ts">
 
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 
 import FileDialog from './dialogs/FileDialog.vue';
 
@@ -26,6 +27,11 @@ export default class RecordingItem extends Vue {
   showDialog = false
   
   @Prop() recording!: {name: string, created: Date, processed: boolean}
+
+  @Emit()
+  context(event: MouseEvent){
+    return {x: event.clientX, y: event.clientY};
+  }
   
   itemClick() {
     if (this.recording.processed){

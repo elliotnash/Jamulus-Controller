@@ -3,7 +3,7 @@
 
     <Context @created="registerContext" />
 
-    <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.name"/>
+    <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.name" @context="onContext" />
 
     <span v-if="$store.state.recordings[0] == null" class="norecordings">No recordings, press start to start a recording</span>
 
@@ -26,8 +26,12 @@ export default class RecordingBox extends Vue {
 
   @Prop() recordings!: {name: string, created: Date, processed: boolean}[]
 
-  contextMenu: {open: {(x: number, y: number): void}, close: {(): void}} = {open: () => {}, close: () => {}};
-  registerContext(events: {open: {(x: number, y: number): void}, close: {(): void}}) {
+  onContext(event: {x: number, y: number}){
+    this.contextMenu.open(event);
+  }
+
+  contextMenu: {open: {(event: {x: number, y: number}): void}, close: {(): void}} = {open: () => {}, close: () => {}};
+  registerContext(events: {open: {(event: {x: number, y: number}): void}, close: {(): void}}) {
     this.contextMenu = events;
   }
 
