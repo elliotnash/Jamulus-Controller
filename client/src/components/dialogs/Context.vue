@@ -3,19 +3,19 @@
     <transition name="dialog-animation">
       <div :style="{ '--x': x+'px', '--y': y+'px' }" class="background" v-show="show" @mousedown.stop >
         <div class="spacer" />
-        <div v-wave class="contextitem" >
+        <div v-wave class="contextitem" @click="rename" >
           <span class="itemtext" >
             <font-awesome-icon class="icons" icon="edit" />
             Rename
           </span>
         </div>
-        <div v-wave class="contextitem" >
+        <div v-wave class="contextitem" @click="download" >
           <span class="itemtext" >
             <font-awesome-icon class="icons" icon="download" />
             Download
           </span>
         </div>
-        <div v-wave class="contextitem" >
+        <div v-wave class="contextitem" @click="deleteRecording" >
           <span class="itemtext" >
             <font-awesome-icon class="icons" icon="trash-alt" />
             Delete
@@ -29,7 +29,7 @@
 
 <script lang="ts">
 
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Emit } from 'vue-property-decorator';
 
 @Component
 export default class Context extends Vue {
@@ -37,8 +37,10 @@ export default class Context extends Vue {
   y = 0;
 
   show = false;
+  recording: {name: string, created: Date, processed: boolean} | null = null;
 
   openMenu(event: {x: number, y: number, recording: {name: string, created: Date, processed: boolean}}) {
+    this.recording = event.recording;
     this.x = event.x;
     this.y = event.y;
     this.show = true;
@@ -59,6 +61,19 @@ export default class Context extends Vue {
     document.addEventListener('mousedown', this.onClick );
   }
 
+  @Emit() rename(){
+    this.closeMenu();
+    return this.recording;
+  }
+  @Emit() download(){
+    this.closeMenu();
+    return this.recording;
+  }
+  @Emit('delete') deleteRecording(){
+    this.closeMenu();
+    return this.recording;
+  }
+
 }
 </script>
 
@@ -70,21 +85,11 @@ export default class Context extends Vue {
 .dialog-animation-leave-active
   animation: expand 0.1s reverse;
 
-@keyframes expand
-  from 
-    
-  to 
-    
-  0%
+@keyframes expand    
+  from
     opacity: 0
-  100%
+  to
     opacity: 100%
-
-@keyframes fade-in
-  from 
-    opacity: 0
-  to 
-    opacity: 1
 
 div
   &.background
@@ -113,7 +118,7 @@ div
     margin: 0 5px 0 5px
     border-radius: 5px
     width: auto
-    height: 40px
+    height: 35px
     &:hover 
       background-color: #4C566A50
 

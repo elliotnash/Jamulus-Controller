@@ -1,7 +1,9 @@
 <template lang="html">
   <div id="recordingbox" class="contentbox" ref="recordingbox">
 
-    <Context ref="context" />
+    <Context ref="context" @rename="openRename" @download="startDownload" @delete="openDelete" />
+
+    <RenameDialog ref="rename" />
 
     <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.name" @context="onContext" />
 
@@ -17,10 +19,12 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 
 import RecordingItem from "@/components/RecordingItem.vue";
 import Context from "@/components/dialogs/Context.vue";
+import RenameDialog from '@/components/dialogs/RenameDialog.vue';
 
 @Component({components: {
   RecordingItem,
-  Context
+  Context,
+  RenameDialog
 }})
 export default class RecordingBox extends Vue {
 
@@ -29,19 +33,29 @@ export default class RecordingBox extends Vue {
   $refs!: {
     context: Context
     recordingbox: HTMLFormElement
+    rename: RenameDialog
   }
 
   onContext(event: {x: number, y: number, recording: {name: string, created: Date, processed: boolean}}){
 
-    if (!this.$refs.context.show){
-      //get top left of div and subtract to get relative coords 
-      let left = this.$refs.recordingbox.getBoundingClientRect().left;
-      let top = this.$refs.recordingbox.getBoundingClientRect().top;
-      event.x -= left;
-      event.y -= top;
+    //get top left of div and subtract to get relative coords 
+    let left = this.$refs.recordingbox.getBoundingClientRect().left;
+    let top = this.$refs.recordingbox.getBoundingClientRect().top;
+    event.x -= left;
+    event.y -= top;
 
-      this.$refs.context.openMenu(event);
-    }
+    this.$refs.context.openMenu(event);
+
+  }
+
+  openRename(recording: {name: string, created: Date, processed: boolean}){
+    this.$refs.rename.open(recording);
+  }
+  startDownload(recording: {name: string, created: Date, processed: boolean}){
+
+  }
+  openDelete(recording: {name: string, created: Date, processed: boolean}){
+
   }
 
 }

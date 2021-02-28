@@ -7,8 +7,8 @@
 
     <div @mousedown.left="startClose()" class="fullpage">
       <transition name="scale">
-        <div v-if="show" class="dialogdiv">
-          <div @mousedown.left.stop class="dialogbox">
+        <div @mousedown.left.stop v-if="show" class="dialogdiv">
+          <div class="dialogbox">
             <div class="boxheader">
               <span class="boxtitle">Choose an action</span>
             </div>
