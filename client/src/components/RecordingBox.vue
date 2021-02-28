@@ -59,7 +59,7 @@ export default class RecordingBox extends Vue {
     this.$store.dispatch('downloadFile', recording.name);
   }
   openDelete(recording: {name: string, created: Date, processed: boolean}){
-    this.$refs.confirmation.open('DELETE', `do you really want to delete ${recording.name}`).then((result) => {
+    this.$refs.confirmation.open('DELETE', `Are you sure you want to delete ${recording.name}`).then((result) => {
       if (result){
         this.$store.dispatch('deleteFile', recording.name);
       }

@@ -9,7 +9,6 @@
         <font-awesome-icon class="icons" icon="ellipsis-h" />
       </div>
     </div>
-    <FileDialog :recording="recording" @close="showDialog = false" v-if="showDialog" />
   </div>
 </template>
 
@@ -17,11 +16,7 @@
 
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 
-import FileDialog from './dialogs/FileDialog.vue';
-
-@Component({components: {
-  FileDialog
-}})
+@Component
 export default class RecordingItem extends Vue {
 
   showDialog = false

@@ -30,7 +30,10 @@
         </div>
       </div>
     </div>
-    <span class="copyright">©2020 Elliot Nash</span>
+    <span class="copyright"> 
+      <a href="https://github.com/elliotnash/Jamulus-Controller" style="color: #8994a9;" target="_blank" >Jamulus-Controller</a> 
+      ©2020 Elliot Nash
+    </span>
   </div>
 </template>
 
