@@ -1,7 +1,7 @@
 <template>
   <div>
     <div :class="recording.processed ? 'elementdiv' : 'elementdivdisabled'" 
-    v-wave @click="itemClick()" @contextmenu.prevent.stop="context($event)">
+    v-wave @click="itemClick()" @contextmenu.prevent.stop="contextClicked($event)">
       <div class="textdiv">
         <span class="boxtitle" >{{ recording.name }}</span>
       </div>
@@ -28,6 +28,11 @@ export default class RecordingItem extends Vue {
   
   @Prop() recording!: {name: string, created: Date, processed: boolean}
 
+
+  contextClicked(event: MouseEvent){
+    if (this.recording.processed)
+      this.context(event);
+  }
   @Emit()
   context(event: MouseEvent){
     return {x: event.clientX, y: event.clientY, recording: this.recording};

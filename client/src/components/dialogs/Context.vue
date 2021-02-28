@@ -1,6 +1,17 @@
 <template lang="html">
   <div class="relativebackground" >
-    <div :style="{ '--x': x+'px', '--y': y+'px' }" class="background" v-show="show" >
+    <div :style="{ '--x': x+'px', '--y': y+'px' }" class="background" v-show="show" @click.stop >
+      <div class="spacer" />
+      <div class="contextitem" >
+
+      </div>
+      <div class="contextitem" >
+
+      </div>
+      <div class="contextitem" >
+
+      </div>
+      <div class="spacer" />
     </div>
   </div>
 </template>
@@ -52,19 +63,30 @@ div
     background-color: #ECEFF4
     border-radius: 5px
 
-    --width: 100px
+    --width: 150px
 
     left: Min( calc( 100% - var(--width) ), var(--x) )
     top: var(--y)
 
     width: var(--width)
-    height: 150px
+    height: fit-content
 
     z-index: 10
 
-  *.relativebackground
+  &.relativebackground
     position: relative
     background-color: coral
+
+  &.spacer
+    height: 5px
+
+  &.contextitem
+    margin: 0 5px 0 5px
+    border-radius: 5px
+    width: auto
+    height: 40px
+    &:hover 
+      background-color: coral
 
 
 </style>
