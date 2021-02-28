@@ -52,6 +52,7 @@ div
   &.elementdiv
     display: flex
     background: #3B4252
+    cursor: pointer
     margin-top: 2px
     height: 40px
     @media(max-width: 600px)

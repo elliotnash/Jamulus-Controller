@@ -34,10 +34,10 @@ export default class RecordingBox extends Vue {
   onContext(event: {x: number, y: number, recording: {name: string, created: Date, processed: boolean}}){
 
     //get top left of div and subtract to get relative coords 
-    let top = this.$refs.recordingbox.getBoundingClientRect().top;
     let left = this.$refs.recordingbox.getBoundingClientRect().left;
-    event.y -= top;
+    let top = this.$refs.recordingbox.getBoundingClientRect().top;
     event.x -= left;
+    event.y -= top;
 
     this.$refs.context.openMenu(event);
   }

@@ -2,14 +2,23 @@
   <div class="relativebackground" >
     <div :style="{ '--x': x+'px', '--y': y+'px' }" class="background" v-show="show" @click.stop >
       <div class="spacer" />
-      <div class="contextitem" >
-
+      <div v-wave class="contextitem" >
+        <span class="itemtext" >
+          <font-awesome-icon class="icons" icon="edit" />
+          Rename
+        </span>
       </div>
-      <div class="contextitem" >
-
+      <div v-wave class="contextitem" >
+        <span class="itemtext" >
+          <font-awesome-icon class="icons" icon="download" />
+          Download
+        </span>
       </div>
-      <div class="contextitem" >
-
+      <div v-wave class="contextitem" >
+        <span class="itemtext" >
+          <font-awesome-icon class="icons" icon="trash-alt" />
+          Delete
+        </span>
       </div>
       <div class="spacer" />
     </div>
@@ -18,7 +27,7 @@
 
 <script lang="ts">
 
-import { Vue, Component, Emit } from 'vue-property-decorator';
+import { Vue, Component } from 'vue-property-decorator';
 
 @Component
 export default class Context extends Vue {
@@ -86,7 +95,19 @@ div
     width: auto
     height: 40px
     &:hover 
-      background-color: coral
+      background-color: #4C566A50
 
+span
+  &.itemtext
+    display: flex
+    font-family: ABeeZee, sans-serif
+    font-size: 15px
+    align-items: center
+    margin-left: 8px
+    justify-content: left
+    cursor: pointer
+    height: 100%
+    white-space: pre-wrap
+    user-select: none
 
 </style>
