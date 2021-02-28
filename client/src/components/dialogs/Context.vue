@@ -1,27 +1,29 @@
 <template lang="html">
   <div class="relativebackground" >
-    <div :style="{ '--x': x+'px', '--y': y+'px' }" class="background" v-show="show" @click.stop >
-      <div class="spacer" />
-      <div v-wave class="contextitem" >
-        <span class="itemtext" >
-          <font-awesome-icon class="icons" icon="edit" />
-          Rename
-        </span>
+    <transition name="dialog-animation">
+      <div :style="{ '--x': x+'px', '--y': y+'px' }" class="background" v-show="show" @mousedown.stop >
+        <div class="spacer" />
+        <div v-wave class="contextitem" >
+          <span class="itemtext" >
+            <font-awesome-icon class="icons" icon="edit" />
+            Rename
+          </span>
+        </div>
+        <div v-wave class="contextitem" >
+          <span class="itemtext" >
+            <font-awesome-icon class="icons" icon="download" />
+            Download
+          </span>
+        </div>
+        <div v-wave class="contextitem" >
+          <span class="itemtext" >
+            <font-awesome-icon class="icons" icon="trash-alt" />
+            Delete
+          </span>
+        </div>
+        <div class="spacer" />
       </div>
-      <div v-wave class="contextitem" >
-        <span class="itemtext" >
-          <font-awesome-icon class="icons" icon="download" />
-          Download
-        </span>
-      </div>
-      <div v-wave class="contextitem" >
-        <span class="itemtext" >
-          <font-awesome-icon class="icons" icon="trash-alt" />
-          Delete
-        </span>
-      </div>
-      <div class="spacer" />
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -44,9 +46,6 @@ export default class Context extends Vue {
 
   closeMenu() {
     this.show = false;
-
-    //remove global event listeners to not 
-
   }
 
   onClick() {
@@ -57,14 +56,35 @@ export default class Context extends Vue {
 
   created(){
     //set global onclick listener so we can close menu when clickout
-    document.addEventListener('click', this.onClick );
-    document.addEventListener('contextmenu', this.onClick );
+    document.addEventListener('mousedown', this.onClick );
   }
 
 }
 </script>
 
 <style scoped lang="sass">
+
+.dialog-animation-enter-active
+  animation: expand 0.1s
+
+.dialog-animation-leave-active
+  animation: expand 0.1s reverse;
+
+@keyframes expand
+  from 
+    
+  to 
+    
+  0%
+    opacity: 0
+  100%
+    opacity: 100%
+
+@keyframes fade-in
+  from 
+    opacity: 0
+  to 
+    opacity: 1
 
 div
   &.background
