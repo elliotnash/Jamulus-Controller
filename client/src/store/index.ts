@@ -75,7 +75,7 @@ const store = new Vuex.Store({
         socket.emit('DOWNLOAD_FILE', file, (uri: string) => {
           //first callback is on receive
           console.log('server received download request');
-
+          
           FileSaver.saveAs(uri, file+'.zip');
 
         });
@@ -102,8 +102,8 @@ const store = new Vuex.Store({
 
 export default store;
 
-let host = window.location.host;
-//let host = '192.168.0.196:3080';
+//let host = window.location.host;
+let host = '192.168.1.131:3080';
 let socket = io.io(host);
 
 //TODO it'd be pretty pog to use decorator syntax for the store :P maybe never gonna happen ahahah:(

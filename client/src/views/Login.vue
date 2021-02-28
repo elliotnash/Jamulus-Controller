@@ -84,6 +84,7 @@ export default class Login extends Vue{
 
   created() {
     //log out
+    //TODO make this try to login instead, probably happens in router
     this.$store.commit('setAuthentication', false);
   }
 

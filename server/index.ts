@@ -75,6 +75,8 @@ function updateInfo() {
   });
 }
 
+//FIXME when read record state, also check if jamulus server is online, if it's offline default to false
+
 const stateRegex = /(Recording state )(enabled|disabled)/gm;
 function readRecordState(): Promise<boolean> {
   return new Promise<boolean>(((resolve) => {
@@ -223,7 +225,6 @@ io.on('connection', (socket: SocketIO.Socket) => {
       
     if (authenticatedSockets.has(socket)) {
       console.log(socket.handshake.address+" is downloading a file");
-
       downloadUtils.createDownload(config.recordingDirectory+"/"+file+".zip").then((token) => {
         callback(`/download?token=${token}`);
       });

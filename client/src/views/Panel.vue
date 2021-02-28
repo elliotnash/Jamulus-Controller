@@ -5,7 +5,7 @@
       <div class="leftpanel">
         <div class="itemdiv">
           <div class="box">
-            <div class="boxheader">
+            <div class="boxheader" @contextmenu.prevent >
               <span class="boxtitle">CONTROLS</span>
             </div>
             <ControlBox v-bind:recording-state="$store.state.recordingState" @recordToggle="onRecordToggle()"/>
@@ -13,8 +13,8 @@
           </div>
         </div>
         <div class="itemdiv">
-          <div class = "box">
-            <div class="boxheader">
+          <div class = "box" @contextmenu.prevent >
+            <div class="boxheader"  >
               <span class="boxtitle">SYSTEM INFO</span>
             </div>
             <InfoBox :system-info="$store.state.systemInfo"/>
@@ -22,7 +22,7 @@
         </div>
       </div>
       <div class = "rightpanel">
-        <div class = "recordingsbox">
+        <div class = "recordingsbox" @contextmenu.prevent >
           <div class="boxheader">
             <span class="boxtitle">RECORDINGS</span>
           </div>
@@ -30,12 +30,16 @@
         </div>
       </div>
     </div>
-    <span class="copyright">©2020 Elliot Nash</span>
+    <span class="copyright"> 
+      <a href="https://github.com/elliotnash/Jamulus-Controller" style="color: #8994a9;" target="_blank" >Jamulus-Controller</a> 
+      ©2020 Elliot Nash
+    </span>
   </div>
 </template>
 
 <script lang="ts">
-
+//FIXME fix long recording names
+//TODO light mode, with auto detect :)
 import { Component, Vue } from 'vue-property-decorator';
 
 import Header from '@/components/Header.vue';

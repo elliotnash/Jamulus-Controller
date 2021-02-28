@@ -24,3 +24,4 @@ pnpm-debug.log*
 *.sw?
 config.json
 *.code-workspace
+.dotty-ide-disabled
