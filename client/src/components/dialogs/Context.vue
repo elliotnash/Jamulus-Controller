@@ -16,18 +16,29 @@ export default class Context extends Vue {
 
   show = false;
 
-  openMenu(event: {x: number, y: number}) {
+  openMenu(event: {x: number, y: number, recording: {name: string, created: Date, processed: boolean}}) {
     this.x = event.x;
     this.y = event.y;
     this.show = true;
-
-    //set global onclick listener so we can close menu when clickout
-    document.addEventListener('click', this.closeMenu );
-
   }
 
   closeMenu() {
     this.show = false;
+
+    //remove global event listeners to not 
+
+  }
+
+  onClick() {
+    if (this.show) {
+      this.closeMenu();
+    }
+  }
+
+  created(){
+    //set global onclick listener so we can close menu when clickout
+    document.addEventListener('click', this.onClick );
+    document.addEventListener('contextmenu', this.onClick );
   }
 
 }
@@ -41,10 +52,12 @@ div
     background-color: #ECEFF4
     border-radius: 5px
 
-    left: var(--x)
+    --width: 100px
+
+    left: Min( calc( 100% - var(--width) ), var(--x) )
     top: var(--y)
 
-    width: 100px
+    width: var(--width)
     height: 150px
 
     z-index: 10
@@ -52,8 +65,6 @@ div
   *.relativebackground
     position: relative
     background-color: coral
-    width: 100%
-    height: 100%
 
 
 </style>

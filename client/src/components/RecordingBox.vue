@@ -1,5 +1,5 @@
 <template lang="html">
-  <div id="recordingbox" class="contentbox" ref="recordingbox" >
+  <div id="recordingbox" class="contentbox" ref="recordingbox">
 
     <Context ref="context" />
 
@@ -31,7 +31,7 @@ export default class RecordingBox extends Vue {
     recordingbox: HTMLFormElement
   }
 
-  onContext(event: {x: number, y: number}){
+  onContext(event: {x: number, y: number, recording: {name: string, created: Date, processed: boolean}}){
 
     //get top left of div and subtract to get relative coords 
     let top = this.$refs.recordingbox.getBoundingClientRect().top;
