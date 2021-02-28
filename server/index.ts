@@ -75,6 +75,8 @@ function updateInfo() {
   });
 }
 
+//FIXME when read record state, also check if jamulus server is online, if it's offline default to false
+
 const stateRegex = /(Recording state )(enabled|disabled)/gm;
 function readRecordState(): Promise<boolean> {
   return new Promise<boolean>(((resolve) => {

@@ -1,7 +1,7 @@
 <template lang="html">
-  <div class="contentbox">
+  <div id="recordingbox" class="contentbox" ref="recordingbox" >
 
-    <Context @created="registerContext" />
+    <Context ref="context" />
 
     <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.name" @context="onContext" />
 
@@ -26,13 +26,20 @@ export default class RecordingBox extends Vue {
 
   @Prop() recordings!: {name: string, created: Date, processed: boolean}[]
 
-  onContext(event: {x: number, y: number}){
-    this.contextMenu.open(event);
+  $refs!: {
+    context: Context
+    recordingbox: HTMLFormElement
   }
 
-  contextMenu: {open: {(event: {x: number, y: number}): void}, close: {(): void}} = {open: () => {}, close: () => {}};
-  registerContext(events: {open: {(event: {x: number, y: number}): void}, close: {(): void}}) {
-    this.contextMenu = events;
+  onContext(event: {x: number, y: number}){
+
+    //get top left of div and subtract to get relative coords 
+    let top = this.$refs.recordingbox.getBoundingClientRect().top;
+    let left = this.$refs.recordingbox.getBoundingClientRect().left;
+    event.y -= top;
+    event.x -= left;
+
+    this.$refs.context.openMenu(event);
   }
 
 }

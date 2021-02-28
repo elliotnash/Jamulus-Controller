@@ -1,5 +1,7 @@
 <template lang="html">
-  <div :style="{ '--x': x+'px', '--y': y+'px' }" class="background" v-show="show" >
+  <div class="relativebackground" >
+    <div :style="{ '--x': x+'px', '--y': y+'px' }" class="background" v-show="show" >
+    </div>
   </div>
 </template>
 
@@ -18,15 +20,14 @@ export default class Context extends Vue {
     this.x = event.x;
     this.y = event.y;
     this.show = true;
+
+    //set global onclick listener so we can close menu when clickout
+    document.addEventListener('click', this.closeMenu );
+
   }
 
   closeMenu() {
     this.show = false;
-  }
-
-  @Emit()
-  created() {
-    return {open: this.openMenu, close: this.closeMenu};
   }
 
 }
@@ -36,16 +37,23 @@ export default class Context extends Vue {
 
 div
   &.background
-    position: fixed
+    position: absolute
     background-color: #ECEFF4
     border-radius: 5px
 
     left: var(--x)
     top: var(--y)
-    right: calc( (100% - 150px) - var(--x) )
-    bottom: calc( (100% - 150px) - var(--y) )
+
+    width: 100px
+    height: 150px
 
     z-index: 10
+
+  *.relativebackground
+    position: relative
+    background-color: coral
+    width: 100%
+    height: 100%
 
 
 </style>
