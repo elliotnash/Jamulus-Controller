@@ -4,6 +4,7 @@
     <Context ref="context" @rename="openRename" @download="startDownload" @delete="openDelete" />
 
     <RenameDialog ref="rename" />
+    <Confirmation ref="confirmation" />
 
     <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.name" @context="onContext" />
 
@@ -20,11 +21,13 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import RecordingItem from "@/components/RecordingItem.vue";
 import Context from "@/components/dialogs/Context.vue";
 import RenameDialog from '@/components/dialogs/RenameDialog.vue';
+import Confirmation from '@/components/dialogs/Confirmation.vue';
 
 @Component({components: {
   RecordingItem,
   Context,
-  RenameDialog
+  RenameDialog,
+  Confirmation
 }})
 export default class RecordingBox extends Vue {
 
@@ -33,7 +36,8 @@ export default class RecordingBox extends Vue {
   $refs!: {
     context: Context
     recordingbox: HTMLFormElement
-    rename: RenameDialog
+    rename: RenameDialog,
+    confirmation: Confirmation
   }
 
   onContext(event: {x: number, y: number, recording: {name: string, created: Date, processed: boolean}}){
@@ -52,10 +56,14 @@ export default class RecordingBox extends Vue {
     this.$refs.rename.open(recording);
   }
   startDownload(recording: {name: string, created: Date, processed: boolean}){
-
+    this.$store.dispatch('downloadFile', recording.name);
   }
   openDelete(recording: {name: string, created: Date, processed: boolean}){
-
+    this.$refs.confirmation.open('DELETE', `do you really want to delete ${recording.name}`).then((result) => {
+      if (result){
+        this.$store.dispatch('deleteFile', recording.name);
+      }
+    });
   }
 
 }

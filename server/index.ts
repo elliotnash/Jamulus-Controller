@@ -225,7 +225,6 @@ io.on('connection', (socket: SocketIO.Socket) => {
       
     if (authenticatedSockets.has(socket)) {
       console.log(socket.handshake.address+" is downloading a file");
-
       downloadUtils.createDownload(config.recordingDirectory+"/"+file+".zip").then((token) => {
         callback(`/download?token=${token}`);
       });

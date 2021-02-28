@@ -75,7 +75,7 @@ const store = new Vuex.Store({
         socket.emit('DOWNLOAD_FILE', file, (uri: string) => {
           //first callback is on receive
           console.log('server received download request');
-
+          
           FileSaver.saveAs(uri, file+'.zip');
 
         });

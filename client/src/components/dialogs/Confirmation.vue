@@ -2,13 +2,17 @@
   <Popup ref="popup" v-if="show" @close="close" >
     <div class="dialogbox">
       <div class="boxheader">
-        <span class="boxtitle">RENAME</span>
+        <span class="boxtitle">{{title}}</span>
       </div>
       <div class="contentdiv">
         <div class="itemdiv">
-          <TextBox type="text" v-model="newname" @enter="renameFile()" />
-          <Button @click="renameFile()" :title="'RENAME'" :fontSize="14" />
+          <span class="message" >{{message}}</span>
         </div>
+        <div class="itemdiv">
+          <Button @click="resolve(false)" :title="'CANCEL'" :fontSize="14" />
+          <Button @click="resolve(true)" :title="title" :color="'red'" :fontSize="14" />
+        </div>
+        <div class ="spacer" />
       </div>
     </div>
   </Popup>
@@ -29,18 +33,24 @@ import TextBox from '../parts/TextBox.vue';
 }})
 export default class FileDialog extends Vue {
 
-  newname = ""
-
-  //TODO make this use promises and take a string of old name and resolve with string of new name,
-  //then no specific code goes here
-  recording: {name: string, created: Date, processed: boolean} | null = null;
-
   private show = false;
+  private title = "";
+  private message = "";
 
-  open(recording: {name: string, created: Date, processed: boolean}){
-    this.newname = recording.name;
-    this.recording = recording;
+  private promise = (bool: boolean) => {};
+  open(title: string, message: string){
+
+    this.title = title;
+    this.message = message;
+
     this.show = true;
+    return new Promise<boolean>((promise) => {
+      this.promise = promise;
+    });
+  }
+  resolve(result: boolean){
+    this.promise(result);
+    this.$refs.popup.startClose();
   }
 
   close(){
@@ -48,14 +58,6 @@ export default class FileDialog extends Vue {
   }
 
   $refs!: {popup: Popup}
-
-  renameFile(){
-    this.$store.dispatch('renameFile', {
-      oldname: (this.recording as {name: string, created: Date, processed: boolean}).name, 
-      newname: this.newname
-    });
-    this.$refs.popup.startClose();
-  }
 
 }
 
@@ -95,5 +97,18 @@ div
     display: flex
     flex-flow: row
     height: 100%
+  
+  &.spacer
+    height: 50px
+
+span.message
+  display: flex
+  justify-content: left 
+  align-content: center
+  margin: auto
+  margin-left: 12px
+  font-family: ABeeZee, sans-serif
+  font-size: 15px
+  color: #ECEFF4
 
 </style>
