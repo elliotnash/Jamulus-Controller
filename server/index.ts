@@ -81,26 +81,34 @@ const stateRegex = /(Recording state )(enabled|disabled)/gm;
 function readRecordState(): Promise<boolean> {
   return new Promise<boolean>(((resolve) => {
 
-    exec(`journalctl -u ${config.systemdServiceName} --no-pager -q -n 25`, (error, stdout, stderr) => {
-      if (error) {
-        console.log(`error: ${error.message}`);
-        return;
-      }
-      if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        return;
-      }
-      const matches = stdout.match(stateRegex);
+    //first test make sure jamulus is running
+    exec(`systemctl is-active --quiet ${config.systemdServiceName}`, (error) => {
+      const running = error ? error.code == 0 : true;
+      console.log(running ? "jamulus is running" : "jamulus is not running");
+      if (!running) resolve(false);
 
-      if (matches == null){
-        resolve(false);
-        return;
-      }
-
-      const lastMatch = matches[matches.length-1];
-      //have the last state
-      resolve(lastMatch == 'Recording state enabled');
-
+      //now read logs
+      exec(`journalctl -u ${config.systemdServiceName} --no-pager -q -n 25`, (error, stdout, stderr) => {
+        if (error) {
+          console.log(`error: ${error.message}`);
+          return;
+        }
+        if (stderr) {
+          console.log(`stderr: ${stderr}`);
+          return;
+        }
+        const matches = stdout.match(stateRegex);
+  
+        if (matches == null){
+          resolve(false);
+          return;
+        }
+  
+        const lastMatch = matches[matches.length-1];
+        //have the last state
+        resolve(lastMatch == 'Recording state enabled');
+  
+      });
     });
   
   }));
