@@ -33,11 +33,11 @@ export default class FileDialog extends Vue {
 
   //TODO make this use promises and take a string of old name and resolve with string of new name,
   //then no specific code goes here
-  recording: {name: string, created: Date, processed: boolean} | null = null;
+  recording: {name: string, uuid: string, created: Date, processed: boolean} | null = null;
 
   private show = false;
 
-  open(recording: {name: string, created: Date, processed: boolean}){
+  open(recording: {name: string, uuid: string, created: Date, processed: boolean}){
     this.newname = recording.name;
     this.recording = recording;
     this.show = true;
@@ -51,7 +51,7 @@ export default class FileDialog extends Vue {
 
   renameFile(){
     this.$store.dispatch('renameFile', {
-      oldname: (this.recording as {name: string, created: Date, processed: boolean}).name, 
+      uuid: (this.recording as {name: string, uuid: string, created: Date, processed: boolean}).uuid, 
       newname: this.newname
     });
     this.$refs.popup.startClose();

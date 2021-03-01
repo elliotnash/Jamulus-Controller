@@ -93,8 +93,6 @@ export default class RecordingsManager{
         Promise.all(readPromises).then(() => {
           Promise.all(pushPromises).then(() => {
             this.onUpdate();
-            console.log(`recordings list:`);
-            console.log(this.recordings);
             resolve(this.recordings);
           });
         });

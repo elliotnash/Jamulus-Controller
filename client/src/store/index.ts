@@ -83,7 +83,7 @@ const store = new Vuex.Store({
         resolve();
       });
     },
-    renameFile(state, data){
+    renameFile(state, data: {uuid: string, newname: string}){
       return new Promise<void>((resolve) => {
         socket.emit('RENAME_FILE', data);
         resolve();

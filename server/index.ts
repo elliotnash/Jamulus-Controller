@@ -246,11 +246,11 @@ io.on('connection', (socket: SocketIO.Socket) => {
     }
   });
 
-  socket.on('RENAME_FILE', (data: {newname: string, oldname: string}) => {
+  socket.on('RENAME_FILE', (data: {uuid: string, newname: string}) => {
       
     if (authenticatedSockets.has(socket)) {
 
-      const oldpath = config.recordingDirectory+"/"+data.oldname;
+      const oldpath = config.recordingDirectory+"/"+recordingsManager.recordings[data.uuid]?.name;
       const newpath = config.recordingDirectory+"/"+data.newname;
 
 
