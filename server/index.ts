@@ -25,10 +25,10 @@ for (const [key, value] of Object.entries(config.users)) {
 }
 
 
-const downloadUtils = new DownloadUtils(config.downloadExpireTime);
 const recordingsManager = new RecordingsManager(config.recordingDirectory, () => {
   updateRecordingList();
 });
+const downloadUtils = new DownloadUtils(config.downloadExpireTime, recordingsManager);
 
 //TODO really need to figure out file lock - the renaming system right now is probably super jank
 //Potentially add a socket channel for closing dialog remotely? or at least updating info (maybe unneccesarry)
@@ -45,7 +45,7 @@ app.get('/download', function(req, res, next) {
   const token = req.query.token as string;
 
   // Get the download file path
-  downloadUtils.getDownload(token).then((path: string) => {
+  downloadUtils.getDownload(token).then((path) => {
 
     const zip = archiver.create('zip');
     zip.pipe(res);
@@ -234,11 +234,12 @@ io.on('connection', (socket: SocketIO.Socket) => {
 
   // });
 
-  socket.on('DOWNLOAD_FILE', (file: string, callback: {(token: string): void}) => {
+  socket.on('DOWNLOAD_FILE', (uuid: string, callback: {(token: string): void}) => {
       
     if (authenticatedSockets.has(socket)) {
       console.log(socket.handshake.address+" is downloading a file");
-      downloadUtils.createDownload(config.recordingDirectory+"/"+file).then((token) => {
+      console.log(uuid);
+      downloadUtils.createDownload(uuid).then((token) => {
         callback(`/download?token=${token}`);
       });
 

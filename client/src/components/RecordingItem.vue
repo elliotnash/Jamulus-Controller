@@ -21,7 +21,7 @@ export default class RecordingItem extends Vue {
 
   showDialog = false
   
-  @Prop() recording!: {name: string, created: Date, processed: boolean}
+  @Prop() recording!: {name: string, uuid: string, created: Date, processed: boolean}
 
 
   contextClicked(event: MouseEvent){

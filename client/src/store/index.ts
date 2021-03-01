@@ -70,13 +70,14 @@ const store = new Vuex.Store({
       });
 
     },
-    downloadFile(state, file){
+    downloadFile(state, recording: {name: string, uuid: string, created: Date, processed: boolean}){
       return new Promise<void>((resolve) => {
-        socket.emit('DOWNLOAD_FILE', file, (uri: string) => {
+        console.log(recording);
+        socket.emit('DOWNLOAD_FILE', recording.uuid, (uri: string) => {
           //first callback is on receive
           console.log('server received download request');
           
-          FileSaver.saveAs(uri, file+'.zip');
+          FileSaver.saveAs(uri, recording.name+'.zip');
 
         });
         resolve();
@@ -114,7 +115,7 @@ socket.on('RECORD_TOGGLE', (data: {newState: boolean}) => {
   console.log(store.state.recordingState);
 });
 
-socket.on('RECORDINGS_UPDATE', (data: {name: string, created: Date, processed: boolean}[]) => {
+socket.on('RECORDINGS_UPDATE', (data: {name: string, uuid: string, created: Date, processed: boolean}[]) => {
   console.log(data);
   store.commit('setRecordings', data);
 });

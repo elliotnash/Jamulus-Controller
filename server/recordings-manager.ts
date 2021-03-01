@@ -15,10 +15,10 @@ export default class RecordingsManager{
     this.onUpdate = onUpdate;
   }
 
-  toClient(): {name: string, created: Date, processed: boolean}[]{
-    let recordings: {name: string, created: Date, processed: boolean}[] = [];
+  toClient(): {name: string, uuid: string, created: Date, processed: boolean}[]{
+    let recordings: {name: string, uuid: string, created: Date, processed: boolean}[] = [];
     Object.values(this.recordings).forEach((recording) => {
-      recordings.push({name: recording.name, created: recording.created, processed: recording.processed});
+      recordings.push({name: recording.name, uuid: recording.uuid, created: recording.created, processed: recording.processed});
     });
     recordings = recordings.sort(function(a, b) {
       const x = a.created; const y = b.created;

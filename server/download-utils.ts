@@ -1,25 +1,34 @@
 import fs from 'fs-extra';
 import nanoid from 'nanoid';
-
+import RecordingsManager from './recordings-manager';
 export default class DownloadUtils {
 
-  downloadTokens: {[key: string]: {path: string, created: number}} = {}
-  expireTime: number
+  downloadTokens: {[key: string]: {uuid: string, created: number}} = {};
+  expireTime: number;
+  recordingsManger: RecordingsManager;
 
-  constructor(expireTime: number){
+  constructor(expireTime: number, recordingsManager: RecordingsManager){
     this.expireTime = expireTime;
+    this.recordingsManger = recordingsManager;
   }
 
-  createDownload(filePath: string): Promise<string> {
+  createDownload(uuid: string): Promise<string> {
   
     return new Promise((resolve) => {
+
+      //get file path
+      const file = this.recordingsManger.recordings[uuid]?.name;
+      console.log("Create download clicked");
+      console.log(uuid);
+      console.log(file);
+
       // Check the existence of the file
-      if (!fs.existsSync(filePath)) return;
+      if (!fs.existsSync(file)) return;
       
       const downloadToken = nanoid.nanoid(48);
           
       this.downloadTokens[downloadToken] = {
-        path: filePath,
+        uuid: uuid,
         created: Date.now()
       };
 
@@ -34,8 +43,8 @@ export default class DownloadUtils {
         const download = this.downloadTokens[token];
         
         if (download.created > (Date.now() - (this.expireTime*60000))){
-            
-          return resolve(download.path);
+          const file = this.recordingsManger.recordings[download.uuid]?.name;
+          return resolve(file);
         }
       }
 

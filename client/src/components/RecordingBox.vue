@@ -6,7 +6,7 @@
     <RenameDialog ref="rename" />
     <Confirmation ref="confirmation" />
 
-    <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.name" @context="onContext" />
+    <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.uuid" @context="onContext" />
 
     <span v-if="$store.state.recordings[0] == null" class="norecordings">No recordings, press start to start a recording</span>
 
@@ -31,8 +31,6 @@ import Confirmation from '@/components/dialogs/Confirmation.vue';
 }})
 export default class RecordingBox extends Vue {
 
-  @Prop() recordings!: {name: string, created: Date, processed: boolean}[]
-
   $refs!: {
     context: Context
     recordingbox: HTMLFormElement
@@ -40,7 +38,7 @@ export default class RecordingBox extends Vue {
     confirmation: Confirmation
   }
 
-  onContext(event: {x: number, y: number, recording: {name: string, created: Date, processed: boolean}}){
+  onContext(event: {x: number, y: number, recording: {name: string, uuid: string, created: Date, processed: boolean}}){
 
     //get top left of div and subtract to get relative coords 
     let left = this.$refs.recordingbox.getBoundingClientRect().left;
@@ -52,13 +50,13 @@ export default class RecordingBox extends Vue {
 
   }
 
-  openRename(recording: {name: string, created: Date, processed: boolean}){
+  openRename(recording: {name: string, uuid: string, created: Date, processed: boolean}){
     this.$refs.rename.open(recording);
   }
-  startDownload(recording: {name: string, created: Date, processed: boolean}){
-    this.$store.dispatch('downloadFile', recording.name);
+  startDownload(recording: {name: string, uuid: string, created: Date, processed: boolean}){
+    this.$store.dispatch('downloadFile', recording);
   }
-  openDelete(recording: {name: string, created: Date, processed: boolean}){
+  openDelete(recording: {name: string, uuid: string, created: Date, processed: boolean}){
     this.$refs.confirmation.open('DELETE', `Are you sure you want to delete ${recording.name}`).then((result) => {
       if (result){
         this.$store.dispatch('deleteFile', recording.name);
