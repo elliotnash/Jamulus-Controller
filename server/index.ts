@@ -48,6 +48,7 @@ app.get('/download', function(req, res, next) {
   downloadUtils.getDownload(token).then((path) => {
 
     const zip = archiver.create('zip');
+    res.attachment(`${path.substr( path.lastIndexOf('/') )}.zip`);
     zip.pipe(res);
     zip.directory(path, false).finalize();
 

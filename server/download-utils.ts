@@ -28,6 +28,10 @@ export default class DownloadUtils {
         uuid: uuid,
         created: Date.now()
       };
+      // schedule downloadToken to be deleted
+      setTimeout(() => {
+        delete this.downloadTokens[downloadToken];
+      }, this.expireTime*60*1000);
 
       resolve(downloadToken);
 
@@ -39,13 +43,11 @@ export default class DownloadUtils {
       if (token in this.downloadTokens){
         const download = this.downloadTokens[token];
         
-        if (download.created > (Date.now() - (this.expireTime*60000))){
-          const file = this.recordingsManger.recordingDirectory + this.recordingsManger.recordings[download.uuid]?.name;
-          return resolve(file);
-        }
-      }
+        const file = this.recordingsManger.recordingDirectory + this.recordingsManger.recordings[download.uuid]?.name;
+        return resolve(file);
 
-      delete this.downloadTokens[token];
+      }
+      
       reject();
 
     });

@@ -30,7 +30,7 @@
 <script lang="ts">
 
 import { Vue, Component, Emit } from 'vue-property-decorator';
-
+//TODO make a mobile friednly context menu, probably using popup :S
 @Component
 export default class Context extends Vue {
   x = 0;
