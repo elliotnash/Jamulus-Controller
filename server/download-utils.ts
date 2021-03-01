@@ -3,7 +3,8 @@ import nanoid from 'nanoid';
 import RecordingsManager from './recordings-manager';
 export default class DownloadUtils {
 
-  downloadTokens: {[key: string]: {uuid: string, created: number}} = {};
+  //todo don't use created
+  downloadTokens: {[token: string]: {uuid: string, created: number}} = {};
   expireTime: number;
   recordingsManger: RecordingsManager;
 
@@ -47,7 +48,7 @@ export default class DownloadUtils {
         return resolve(file);
 
       }
-      
+
       reject();
 
     });

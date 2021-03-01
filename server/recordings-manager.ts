@@ -71,7 +71,7 @@ export default class RecordingsManager{
                   pushPromises.push(new Promise<void> ((resolve) => {
                     metadata.setUuid(fullFile).then((uuid) => {
                       this.recordings[uuid] = {name: file, uuid: uuid, created: this.getFirstTime(stats), processed: false};
-                      store(file).then(() => {
+                      store(fullFile).then(() => {
                         this.recordings[uuid].processed = true;
                         //make sure to call update again
                         this.onUpdate();

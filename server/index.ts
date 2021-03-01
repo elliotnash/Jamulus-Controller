@@ -37,9 +37,12 @@ const downloadUtils = new DownloadUtils(config.downloadExpireTime, recordingsMan
 //TODO add resync button to sync recording state
 //TODO warning prompt when deleting file (client)
 
+app.set('trust proxy', true);
 app.use(express.static(path.join(__dirname, './client')));
 
 
+//TODO send client session key when login and reauth, then use session key for downloads and stuff
+//instead of creating per download tokens
 app.get('/download', function(req, res, next) {
   // Get the download sid
   const token = req.query.token as string;
@@ -47,8 +50,10 @@ app.get('/download', function(req, res, next) {
   // Get the download file path
   downloadUtils.getDownload(token).then((path) => {
 
+    console.log(`${req.ip.substr( req.ip.lastIndexOf(':')+1 )} is downloading ${path}`);
+
     const zip = archiver.create('zip');
-    res.attachment(`${path.substr( path.lastIndexOf('/') )}.zip`);
+    res.attachment(`${path.substr( path.lastIndexOf('/')+1 )}.zip`);
     zip.pipe(res);
     zip.directory(path, false).finalize();
 
@@ -238,7 +243,6 @@ io.on('connection', (socket: SocketIO.Socket) => {
   socket.on('DOWNLOAD_FILE', (uuid: string, callback: {(token: string): void}) => {
       
     if (authenticatedSockets.has(socket)) {
-      console.log(socket.handshake.address+" is downloading a file");
       downloadUtils.createDownload(uuid).then((token) => {
         callback(`/download?token=${token}`);
       });
