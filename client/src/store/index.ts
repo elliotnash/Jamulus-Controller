@@ -89,9 +89,9 @@ const store = new Vuex.Store({
         resolve();
       });
     },
-    deleteFile(state, file){
+    deleteFile(state, uuid){
       return new Promise<void>((resolve) => {
-        socket.emit('DELETE_FILE', file);
+        socket.emit('DELETE_FILE', uuid);
         resolve();
       });
     }

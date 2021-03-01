@@ -267,11 +267,11 @@ io.on('connection', (socket: SocketIO.Socket) => {
     }
   });
 
-  socket.on('DELETE_FILE', (file: string) => {
+  socket.on('DELETE_FILE', (uuid: string) => {
       
     if (authenticatedSockets.has(socket)) {
 
-      const filepath = config.recordingDirectory+"/"+file;
+      const filepath = config.recordingDirectory+"/"+recordingsManager.recordings[uuid]?.name;
 
 
       if (!fs.existsSync(filepath)) return;
