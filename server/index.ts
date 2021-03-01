@@ -238,7 +238,6 @@ io.on('connection', (socket: SocketIO.Socket) => {
       
     if (authenticatedSockets.has(socket)) {
       console.log(socket.handshake.address+" is downloading a file");
-      console.log(uuid);
       downloadUtils.createDownload(uuid).then((token) => {
         callback(`/download?token=${token}`);
       });

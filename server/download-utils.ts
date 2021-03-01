@@ -17,10 +17,7 @@ export default class DownloadUtils {
     return new Promise((resolve) => {
 
       //get file path
-      const file = this.recordingsManger.recordings[uuid]?.name;
-      console.log("Create download clicked");
-      console.log(uuid);
-      console.log(file);
+      const file = this.recordingsManger.recordingDirectory + this.recordingsManger.recordings[uuid]?.name;
 
       // Check the existence of the file
       if (!fs.existsSync(file)) return;
@@ -43,7 +40,7 @@ export default class DownloadUtils {
         const download = this.downloadTokens[token];
         
         if (download.created > (Date.now() - (this.expireTime*60000))){
-          const file = this.recordingsManger.recordings[download.uuid]?.name;
+          const file = this.recordingsManger.recordingDirectory + this.recordingsManger.recordings[download.uuid]?.name;
           return resolve(file);
         }
       }
