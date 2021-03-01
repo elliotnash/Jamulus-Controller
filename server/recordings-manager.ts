@@ -1,10 +1,11 @@
 import fs from 'fs-extra';
 import store from './storage-utils';
+import * as metadata from './file-utils/metadata';
 
 
 export default class RecordingsManager{
 
-  recordings: {[key: string]: {name: string, created: Date, processed: boolean}} = {}
+  recordings: {[key: string]: {name: string, uuid: string, created: Date, processed: boolean}} = {}
   recordingDirectory: string
   // this is a callback that need to be called to update the recordings list in the main thread
   onUpdate: {(): void}
@@ -17,7 +18,7 @@ export default class RecordingsManager{
   toClient(): {name: string, created: Date, processed: boolean}[]{
     let recordings: {name: string, created: Date, processed: boolean}[] = [];
     Object.values(this.recordings).forEach((recording) => {
-      recordings.push({name: recording.name.slice(0, -4), created: recording.created, processed: recording.processed});
+      recordings.push({name: recording.name, created: recording.created, processed: recording.processed});
     });
     recordings = recordings.sort(function(a, b) {
       const x = a.created; const y = b.created;
@@ -32,7 +33,7 @@ export default class RecordingsManager{
     return(min);
   }
 
-  readDirectories(zipFolders = true): Promise<{[key: string]: {name: string, created: Date, processed: boolean}}>{
+  readDirectories(processFolders = true): Promise<{[key: string]: {name: string, created: Date, processed: boolean}}>{
     return new Promise(((resolve, reject) => {
       fs.readdir(this.recordingDirectory, (err, files) => {
         if (err != null){
@@ -45,45 +46,56 @@ export default class RecordingsManager{
         this.recordings = {};
         
         //add each iteration as a promise to do async, then promise.all to join it back up
-        const promises: Promise<void>[] = [];
+        const readPromises: Promise<void>[] = [];
+        const pushPromises: Promise<void>[] = [];
         files.forEach(file => {
-          promises.push(
+          readPromises.push(
             new Promise((resolve) => {
+              file = this.recordingDirectory+file;
               //only include folders in index
-              const stats = fs.statSync(this.recordingDirectory+file);
+              const stats = fs.statSync(file);
               // if file is a zip then add to the list, we're done
-              if (file.slice(-4)=='.zip'){
-                this.recordings[file] = {name: file, created: this.getFirstTime(stats), processed: true};
-              // if not then we have to process it if its a folder or delete it otherwise
-              } else {
-                if (zipFolders){
-                  if(stats.isDirectory()){
-                    //only do if hasn't already been zipped
-                    const zipname = file+".zip";
-                    if (!fs.existsSync(this.recordingDirectory+zipname)){
-                      //add object with processed set to true false
-                      this.recordings[zipname] = {name: zipname, created: this.getFirstTime(stats), processed: false};
-                      store(this.recordingDirectory+file).then(() => {
-                        this.recordings[zipname].processed = true;
+              if (stats.isDirectory()){
+
+                if (metadata.hasUuid(file)){
+                  //save by uuid
+                  pushPromises.push(new Promise<void> ((resolve) => {
+                    metadata.getUuid(file).then((uuid) => {
+                      this.recordings[uuid] = {name: file, uuid: uuid, created: this.getFirstTime(stats), processed: true};
+                      resolve();
+                    });
+                  }));
+                } else {
+                  //we'll need to generate a uuid before we can do anything
+                  pushPromises.push(new Promise<void> ((resolve) => {
+                    metadata.setUuid(file).then((uuid) => {
+                      this.recordings[uuid] = {name: file, uuid: uuid, created: this.getFirstTime(stats), processed: false};
+                      store(file).then(() => {
+                        this.recordings[uuid].processed = true;
                         //make sure to call update again
                         this.onUpdate();
                       });
-                    } else {
-                      //TODO should probably delete the folder, not quite wanting to do that now
-                    }
-                  } else {
-                    fs.unlink(file);
-                  }
+                      resolve();
+                    });
+                  }));
                 }
+
+              // if not then we have to process it if its a folder or delete it otherwise
+              } else {
+                fs.unlink(file);
               }
               resolve();
             })
           );
         });
         //Posible implementation with callbacks
-        Promise.all(promises).then(() => {
-          this.onUpdate();
-          resolve(this.recordings);
+        Promise.all(readPromises).then(() => {
+          Promise.all(pushPromises).then(() => {
+            this.onUpdate();
+            console.log(`recordings list:`);
+            console.log(this.recordings);
+            resolve(this.recordings);
+          });
         });
         
       });

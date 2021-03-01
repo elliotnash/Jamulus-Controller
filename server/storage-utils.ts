@@ -1,18 +1,6 @@
 import fs from 'fs-extra';
 import { exec } from "child_process";
-import zipper from 'zip-a-folder';
-
-
-export function zip(path: string): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
-
-    const zippath = path+".zip";
-
-    zipper.zipFolder(path, zippath, (err) => {
-      err ? reject(err) : resolve(zippath);
-    });
-  });
-}
+import * as metadata from './file-utils/metadata';
 
 export function encodeAll(folder: string): Promise<void> {
   return new Promise<void>(((resolve, reject) => {
@@ -57,6 +45,12 @@ export function encodeAll(folder: string): Promise<void> {
 
       promises.push(
         new Promise<void>(((resolve, reject) => {
+
+          if (fs.existsSync(folder+'master.mp3') || inLength <= 0 ){
+            resolve();
+            return;
+          }
+
           exec(`ffmpeg -y${args} -filter_complex amix=inputs=${inLength}:duration=longest "${folder}master.mp3"`, (error, stdout, stderr) => {
                       
             if (error) {
@@ -125,13 +119,7 @@ export default function store(folder: string): Promise<void> {
       console.log('converting done');
       deleteWav(folder).then(() => {
         console.log('wavs deleted');
-        zip(folder).then(() => {
-          console.log('zipping done');
-          fs.remove(folder).then(() => {
-            console.log('folder deleted');
-            resolve();
-          });
-        });
+        resolve();
       });
     });
   }));

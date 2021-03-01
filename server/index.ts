@@ -32,6 +32,7 @@ const recordingsManager = new RecordingsManager(config.recordingDirectory, () =>
 
 //TODO really need to figure out file lock - the renaming system right now is probably super jank
 //Potentially add a socket channel for closing dialog remotely? or at least updating info (maybe unneccesarry)
+//TODO use uuids instead of file names
 //TODO setup nodemon to allow auto reload for dev
 //TODO add resync button to sync recording state
 //TODO warning prompt when deleting file (client)
@@ -233,7 +234,7 @@ io.on('connection', (socket: SocketIO.Socket) => {
       
     if (authenticatedSockets.has(socket)) {
       console.log(socket.handshake.address+" is downloading a file");
-      downloadUtils.createDownload(config.recordingDirectory+"/"+file+".zip").then((token) => {
+      downloadUtils.createDownload(config.recordingDirectory+"/"+file).then((token) => {
         callback(`/download?token=${token}`);
       });
 
@@ -245,8 +246,8 @@ io.on('connection', (socket: SocketIO.Socket) => {
       
     if (authenticatedSockets.has(socket)) {
 
-      const oldpath = config.recordingDirectory+"/"+data.oldname+".zip";
-      const newpath = config.recordingDirectory+"/"+data.newname+".zip";
+      const oldpath = config.recordingDirectory+"/"+data.oldname;
+      const newpath = config.recordingDirectory+"/"+data.newname;
 
 
       if (!fs.existsSync(oldpath)) return;
@@ -266,7 +267,7 @@ io.on('connection', (socket: SocketIO.Socket) => {
       
     if (authenticatedSockets.has(socket)) {
 
-      const filepath = config.recordingDirectory+"/"+file+".zip";
+      const filepath = config.recordingDirectory+"/"+file;
 
 
       if (!fs.existsSync(filepath)) return;
