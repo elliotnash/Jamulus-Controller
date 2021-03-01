@@ -33,6 +33,7 @@ export default class RecordingsManager{
     return(min);
   }
 
+  //TODO optimize readDirectories to only process new files and not old ones
   readDirectories(processFolders = true): Promise<{[key: string]: {name: string, created: Date, processed: boolean}}>{
     return new Promise(((resolve, reject) => {
       fs.readdir(this.recordingDirectory, (err, files) => {
@@ -51,16 +52,16 @@ export default class RecordingsManager{
         files.forEach(file => {
           readPromises.push(
             new Promise((resolve) => {
-              file = this.recordingDirectory+file;
+              const fullFile = this.recordingDirectory+file;
               //only include folders in index
-              const stats = fs.statSync(file);
+              const stats = fs.statSync(fullFile);
               // if file is a zip then add to the list, we're done
               if (stats.isDirectory()){
 
-                if (metadata.hasUuid(file)){
+                if (metadata.hasUuid(fullFile)){
                   //save by uuid
                   pushPromises.push(new Promise<void> ((resolve) => {
-                    metadata.getUuid(file).then((uuid) => {
+                    metadata.getUuid(fullFile).then((uuid) => {
                       this.recordings[uuid] = {name: file, uuid: uuid, created: this.getFirstTime(stats), processed: true};
                       resolve();
                     });
@@ -68,7 +69,7 @@ export default class RecordingsManager{
                 } else {
                   //we'll need to generate a uuid before we can do anything
                   pushPromises.push(new Promise<void> ((resolve) => {
-                    metadata.setUuid(file).then((uuid) => {
+                    metadata.setUuid(fullFile).then((uuid) => {
                       this.recordings[uuid] = {name: file, uuid: uuid, created: this.getFirstTime(stats), processed: false};
                       store(file).then(() => {
                         this.recordings[uuid].processed = true;
@@ -82,7 +83,7 @@ export default class RecordingsManager{
 
               // if not then we have to process it if its a folder or delete it otherwise
               } else {
-                fs.unlink(file);
+                fs.unlink(fullFile);
               }
               resolve();
             })

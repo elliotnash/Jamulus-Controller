@@ -7,7 +7,7 @@ const app = express();
 import * as http from "http"; 
 const server = http.createServer(app);
 import * as SocketIO from 'socket.io';
-//
+import * as archiver from 'archiver';
 const io = new SocketIO.Server(server, {cors: {origin: '*'} });
 import passwordHash from 'password-hash';
 import exitHook from 'exit-hook';
@@ -46,7 +46,11 @@ app.get('/download', function(req, res, next) {
 
   // Get the download file path
   downloadUtils.getDownload(token).then((path: string) => {
-    res.sendFile(path);
+
+    const zip = archiver.create('zip');
+    zip.pipe(res);
+    zip.directory(path, false).finalize();
+
   }).catch(() => {
     next();
     // res.send('download has expired');
