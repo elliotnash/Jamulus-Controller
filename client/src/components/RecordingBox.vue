@@ -3,10 +3,11 @@
 
     <Context ref="context" @rename="openRename" @download="startDownload" @delete="openDelete" />
 
+    <Player ref="player" />
     <RenameDialog ref="rename" />
     <Confirmation ref="confirmation" />
 
-    <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.uuid" @context="onContext" />
+    <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.uuid" @context="onContext" @click="openPlayer" />
 
     <span v-if="$store.state.recordings[0] == null" class="norecordings">No recordings, press start to start a recording</span>
 
@@ -22,12 +23,14 @@ import RecordingItem from "@/components/RecordingItem.vue";
 import Context from "@/components/dialogs/Context.vue";
 import RenameDialog from '@/components/dialogs/RenameDialog.vue';
 import Confirmation from '@/components/dialogs/Confirmation.vue';
+import Player from '@/components/dialogs/Player.vue';
 
 @Component({components: {
   RecordingItem,
   Context,
   RenameDialog,
-  Confirmation
+  Confirmation,
+  Player
 }})
 export default class RecordingBox extends Vue {
 
@@ -35,7 +38,8 @@ export default class RecordingBox extends Vue {
     context: Context
     recordingbox: HTMLFormElement
     rename: RenameDialog,
-    confirmation: Confirmation
+    confirmation: Confirmation,
+    player: Player
   }
 
   onContext(event: {x: number, y: number, recording: {name: string, uuid: string, created: Date, processed: boolean}}){
@@ -48,6 +52,11 @@ export default class RecordingBox extends Vue {
 
     this.$refs.context.openMenu(event);
 
+  }
+
+  openPlayer(recording: {name: string, uuid: string, created: Date, processed: boolean}){
+    console.log("PLAYER SHOULD BE OPENIENINNG");
+    this.$refs.player.open(recording);
   }
 
   openRename(recording: {name: string, uuid: string, created: Date, processed: boolean}){

@@ -115,8 +115,8 @@ const store = new Vuex.Store({
 
 export default store;
 
-//let host = window.location.host;
-let host = '192.168.0.221:3080';
+let host = window.location.host;
+//let host = '192.168.0.221:3080';
 let socket = io.io(host);
 
 //TODO it'd be pretty pog to use decorator syntax for the store :P maybe never gonna happen ahahah:(
