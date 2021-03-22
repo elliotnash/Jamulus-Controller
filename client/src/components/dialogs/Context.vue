@@ -30,16 +30,16 @@
 <script lang="ts">
 
 import { Vue, Component, Emit } from 'vue-property-decorator';
-
+//TODO make a mobile friednly context menu, probably using popup :S
 @Component
 export default class Context extends Vue {
   x = 0;
   y = 0;
 
   show = false;
-  recording: {name: string, created: Date, processed: boolean} | null = null;
+  recording: {name: string, uuid: string, created: Date, processed: boolean} | null = null;
 
-  openMenu(event: {x: number, y: number, recording: {name: string, created: Date, processed: boolean}}) {
+  openMenu(event: {x: number, y: number, recording: {name: string, uuid: string, created: Date, processed: boolean}}) {
     this.recording = event.recording;
     this.x = event.x;
     this.y = event.y;

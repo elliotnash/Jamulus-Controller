@@ -18,10 +18,8 @@ import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 
 @Component
 export default class RecordingItem extends Vue {
-
-  showDialog = false
   
-  @Prop() recording!: {name: string, created: Date, processed: boolean}
+  @Prop() recording!: {name: string, uuid: string, created: Date, processed: boolean}
 
 
   contextClicked(event: MouseEvent){
@@ -35,8 +33,12 @@ export default class RecordingItem extends Vue {
   
   itemClick() {
     if (this.recording.processed){
-      this.showDialog = true;
+      this.click(this.recording);
     }
+  }
+  @Emit()
+  click(recording: {name: string, uuid: string, created: Date, processed: boolean}) {
+    return recording;
   }
 
 }

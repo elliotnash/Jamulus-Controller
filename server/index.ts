@@ -7,8 +7,8 @@ const app = express();
 import * as http from "http";
 const server = http.createServer(app);
 import * as SocketIO from 'socket.io';
-//
-const io = new SocketIO.Server(server, { cors: { origin: '*' } });
+import * as archiver from 'archiver';
+const io = new SocketIO.Server(server, {cors: {origin: '*'} });
 import passwordHash from 'password-hash';
 import exitHook from 'exit-hook';
 
@@ -25,31 +25,54 @@ for (const [key, value] of Object.entries(config.users)) {
 }
 
 
-const downloadUtils = new DownloadUtils(config.downloadExpireTime);
 const recordingsManager = new RecordingsManager(config.recordingDirectory, () => {
   updateRecordingList();
 });
+const downloadUtils = new DownloadUtils(config.downloadExpireTime, recordingsManager);
 
 //TODO really need to figure out file lock - the renaming system right now is probably super jank
 //Potentially add a socket channel for closing dialog remotely? or at least updating info (maybe unneccesarry)
+//TODO use uuids instead of file names
 //TODO setup nodemon to allow auto reload for dev
 //TODO add resync button to sync recording state
 //TODO warning prompt when deleting file (client)
 
+app.set('trust proxy', true);
 app.use(express.static(path.join(__dirname, './client')));
 
 
-app.get('/download', function (req, res, next) {
+//TODO send client session key when login and reauth, then use session key for downloads and stuff
+//instead of creating per download tokens
+app.get('/download', function(req, res, next) {
   // Get the download sid
   const token = req.query.token as string;
+  const track = req.query.track as string;
 
-  // Get the download file path
-  downloadUtils.getDownload(token).then((path: string) => {
-    res.sendFile(path);
-  }).catch(() => {
-    next();
-    // res.send('download has expired');
-  });
+  if (track == "master"){
+    downloadUtils.getDownload(token).then((path) => {
+
+      console.log(`${req.ip.substr( req.ip.lastIndexOf(':')+1 )} is downloading ${path}/master.mp3`);
+  
+      res.sendFile(`${path}/master.mp3`);
+  
+    }).catch(() => {
+      next();
+    });
+  } else {
+    // Get the download file path for zip
+    downloadUtils.getDownload(token).then((path) => {
+
+      console.log(`${req.ip.substr( req.ip.lastIndexOf(':')+1 )} is downloading ${path}`);
+
+      const zip = archiver.create('zip');
+      res.attachment(`${path.substr( path.lastIndexOf('/')+1 )}.zip`);
+      zip.pipe(res);
+      zip.directory(path, false).finalize();
+
+    }).catch(() => {
+      next();
+    });
+  }
 });
 
 
@@ -229,11 +252,10 @@ io.on('connection', (socket: SocketIO.Socket) => {
 
   // });
 
-  socket.on('DOWNLOAD_FILE', (file: string, callback: { (token: string): void }) => {
-
+  socket.on('DOWNLOAD_FILE', (uuid: string, callback: {(token: string): void}) => {
+      
     if (authenticatedSockets.has(socket)) {
-      console.log(socket.handshake.address + " is downloading a file");
-      downloadUtils.createDownload(config.recordingDirectory + "/" + file + ".zip").then((token) => {
+      downloadUtils.createDownload(uuid).then((token) => {
         callback(`/download?token=${token}`);
       });
 
@@ -241,12 +263,12 @@ io.on('connection', (socket: SocketIO.Socket) => {
     }
   });
 
-  socket.on('RENAME_FILE', (data: { newname: string, oldname: string }) => {
-
+  socket.on('RENAME_FILE', (data: {uuid: string, newname: string}) => {
+      
     if (authenticatedSockets.has(socket)) {
 
-      const oldpath = config.recordingDirectory + "/" + data.oldname + ".zip";
-      const newpath = config.recordingDirectory + "/" + data.newname + ".zip";
+      const oldpath = config.recordingDirectory+"/"+recordingsManager.recordings[data.uuid]?.name;
+      const newpath = config.recordingDirectory+"/"+data.newname;
 
 
       if (!fs.existsSync(oldpath)) return;
@@ -262,11 +284,11 @@ io.on('connection', (socket: SocketIO.Socket) => {
     }
   });
 
-  socket.on('DELETE_FILE', (file: string) => {
-
+  socket.on('DELETE_FILE', (uuid: string) => {
+      
     if (authenticatedSockets.has(socket)) {
 
-      const filepath = config.recordingDirectory + "/" + file + ".zip";
+      const filepath = config.recordingDirectory+"/"+recordingsManager.recordings[uuid]?.name;
 
 
       if (!fs.existsSync(filepath)) return;

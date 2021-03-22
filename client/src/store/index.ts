@@ -70,27 +70,40 @@ const store = new Vuex.Store({
       });
 
     },
-    downloadFile(state, file){
-      return new Promise<void>((resolve) => {
-        socket.emit('DOWNLOAD_FILE', file, (uri: string) => {
+    getMp3URL(state, recording: {name: string, uuid: string, created: Date, processed: boolean}){
+      return new Promise<String>((resolve) => {
+        console.log(recording);
+        socket.emit('DOWNLOAD_FILE', recording.uuid, (uri: string) => {
           //first callback is on receive
           console.log('server received download request');
           
-          FileSaver.saveAs(uri, file+'.zip');
+          resolve(uri+"&track=master");
+
+        });
+      });
+    },
+    downloadZip(state, recording: {name: string, uuid: string, created: Date, processed: boolean}){
+      return new Promise<void>((resolve) => {
+        console.log(recording);
+        socket.emit('DOWNLOAD_FILE', recording.uuid, (uri: string) => {
+          //first callback is on receive
+          console.log('server received download request');
+          
+          FileSaver.saveAs(uri, recording.name+'.zip');
 
         });
         resolve();
       });
     },
-    renameFile(state, data){
+    renameFile(state, data: {uuid: string, newname: string}){
       return new Promise<void>((resolve) => {
         socket.emit('RENAME_FILE', data);
         resolve();
       });
     },
-    deleteFile(state, file){
+    deleteFile(state, uuid){
       return new Promise<void>((resolve) => {
-        socket.emit('DELETE_FILE', file);
+        socket.emit('DELETE_FILE', uuid);
         resolve();
       });
     }
@@ -103,7 +116,7 @@ const store = new Vuex.Store({
 export default store;
 
 let host = window.location.host;
-//let host = '192.168.1.131:3080';
+//let host = '192.168.0.221:3080';
 let socket = io.io(host);
 
 //TODO it'd be pretty pog to use decorator syntax for the store :P maybe never gonna happen ahahah:(
@@ -114,7 +127,7 @@ socket.on('RECORD_TOGGLE', (data: {newState: boolean}) => {
   console.log(store.state.recordingState);
 });
 
-socket.on('RECORDINGS_UPDATE', (data: {name: string, created: Date, processed: boolean}[]) => {
+socket.on('RECORDINGS_UPDATE', (data: {name: string, uuid: string, created: Date, processed: boolean}[]) => {
   console.log(data);
   store.commit('setRecordings', data);
 });

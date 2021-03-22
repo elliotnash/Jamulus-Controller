@@ -3,10 +3,11 @@
 
     <Context ref="context" @rename="openRename" @download="startDownload" @delete="openDelete" />
 
+    <Player ref="player" />
     <RenameDialog ref="rename" />
     <Confirmation ref="confirmation" />
 
-    <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.name" @context="onContext" />
+    <RecordingItem v-for="recording in $store.state.recordings" :recording="recording" :key="recording.uuid" @context="onContext" @click="openPlayer" />
 
     <span v-if="$store.state.recordings[0] == null" class="norecordings">No recordings, press start to start a recording</span>
 
@@ -22,25 +23,26 @@ import RecordingItem from "@/components/RecordingItem.vue";
 import Context from "@/components/dialogs/Context.vue";
 import RenameDialog from '@/components/dialogs/RenameDialog.vue';
 import Confirmation from '@/components/dialogs/Confirmation.vue';
+import Player from '@/components/dialogs/Player.vue';
 
 @Component({components: {
   RecordingItem,
   Context,
   RenameDialog,
-  Confirmation
+  Confirmation,
+  Player
 }})
 export default class RecordingBox extends Vue {
-
-  @Prop() recordings!: {name: string, created: Date, processed: boolean}[]
 
   $refs!: {
     context: Context
     recordingbox: HTMLFormElement
     rename: RenameDialog,
-    confirmation: Confirmation
+    confirmation: Confirmation,
+    player: Player
   }
 
-  onContext(event: {x: number, y: number, recording: {name: string, created: Date, processed: boolean}}){
+  onContext(event: {x: number, y: number, recording: {name: string, uuid: string, created: Date, processed: boolean}}){
 
     //get top left of div and subtract to get relative coords 
     let left = this.$refs.recordingbox.getBoundingClientRect().left;
@@ -52,16 +54,21 @@ export default class RecordingBox extends Vue {
 
   }
 
-  openRename(recording: {name: string, created: Date, processed: boolean}){
+  openPlayer(recording: {name: string, uuid: string, created: Date, processed: boolean}){
+    console.log("PLAYER SHOULD BE OPENIENINNG");
+    this.$refs.player.open(recording);
+  }
+
+  openRename(recording: {name: string, uuid: string, created: Date, processed: boolean}){
     this.$refs.rename.open(recording);
   }
-  startDownload(recording: {name: string, created: Date, processed: boolean}){
-    this.$store.dispatch('downloadFile', recording.name);
+  startDownload(recording: {name: string, uuid: string, created: Date, processed: boolean}){
+    this.$store.dispatch('downloadZip', recording);
   }
-  openDelete(recording: {name: string, created: Date, processed: boolean}){
+  openDelete(recording: {name: string, uuid: string, created: Date, processed: boolean}){
     this.$refs.confirmation.open('DELETE', `Are you sure you want to delete ${recording.name}`).then((result) => {
       if (result){
-        this.$store.dispatch('deleteFile', recording.name);
+        this.$store.dispatch('deleteFile', recording.uuid);
       }
     });
   }
