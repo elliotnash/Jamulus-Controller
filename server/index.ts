@@ -4,7 +4,7 @@ import os from 'os-utils';
 import { exec } from "child_process";
 import express from 'express';
 const app = express();
-import * as http from "http"; 
+import * as http from "http";
 const server = http.createServer(app);
 import * as SocketIO from 'socket.io';
 import * as archiver from 'archiver';
@@ -16,10 +16,10 @@ import DownloadUtils from './download-utils';
 import RecordingsManager from './recordings-manager';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const config = require('../config.json') as {port: string, users: {[key: string]: string}, systemdServiceName: string, recordingDirectory: string, downloadExpireTime: number};
-config.recordingDirectory = config.recordingDirectory+"/";
+const config = require('./config.json') as { port: string, users: { [key: string]: string }, systemdServiceName: string, recordingDirectory: string, downloadExpireTime: number };
+config.recordingDirectory = config.recordingDirectory + "/";
 
-const users: {[key: string]: string} = {};
+const users: { [key: string]: string } = {};
 for (const [key, value] of Object.entries(config.users)) {
   users[key.toLowerCase()] = value;
 }
@@ -76,21 +76,21 @@ app.get('/download', function(req, res, next) {
 });
 
 
-app.get('/*', (req,res) => {
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, './client/index.html'));
 });
 
 server.listen(config.port, () => {
-  console.log('Server listening at http://localhost:'+config.port);
+  console.log('Server listening at http://localhost:' + config.port);
 });
 
 const totalMem = Math.round(os.totalmem());
 function updateInfo() {
-  os.cpuUsage( function(cpuUsage) {
+  os.cpuUsage(function (cpuUsage) {
     const systemInfo = {
-      cpuUsage: Math.round(cpuUsage*100),
+      cpuUsage: Math.round(cpuUsage * 100),
       totalMem: totalMem,
-      memUsed: Math.round(totalMem-os.freemem())
+      memUsed: Math.round(totalMem - os.freemem())
     };
     authenticatedSockets.forEach((socket: SocketIO.Socket) => {
       socket.emit('SYSTEM_INFO', systemInfo);
@@ -121,19 +121,19 @@ function readRecordState(): Promise<boolean> {
           return;
         }
         const matches = stdout.match(stateRegex);
-  
-        if (matches == null){
+
+        if (matches == null) {
           resolve(false);
           return;
         }
-  
-        const lastMatch = matches[matches.length-1];
+
+        const lastMatch = matches[matches.length - 1];
         //have the last state
         resolve(lastMatch == 'Recording state enabled');
-  
+
       });
     });
-  
+
   }));
 }
 
@@ -146,11 +146,11 @@ readRecordState().then((state) => {
   updateAuthClientState();
 });
 
-function changeState(newState: boolean, socket?: SocketIO.Socket){
-  if (recordState !== newState){
+function changeState(newState: boolean, socket?: SocketIO.Socket) {
+  if (recordState !== newState) {
     //state was changed, time to fire recording change
 
-    exec(`sudo systemctl kill -s SIGUSR2 ${config.systemdServiceName}`, {timeout: 200}, (error, stdout, stderr) => {
+    exec(`sudo systemctl kill -s SIGUSR2 ${config.systemdServiceName}`, { timeout: 200 }, (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
         console.log('Jamulus is most likely not running');
@@ -172,7 +172,7 @@ function changeState(newState: boolean, socket?: SocketIO.Socket){
       //update all clients
       updateAuthClientState();
 
-      if (!newState){
+      if (!newState) {
         //this means recording was just stopped, we'll need to encode audio + zip directory
         recordingsManager.readDirectories();
 
@@ -187,15 +187,15 @@ function changeState(newState: boolean, socket?: SocketIO.Socket){
 
 const authenticatedSockets: Set<SocketIO.Socket> = new Set();
 
-function updateAuthClientState(){
-  authenticatedSockets.forEach(function(socket){
+function updateAuthClientState() {
+  authenticatedSockets.forEach(function (socket) {
     socket.emit('RECORD_TOGGLE', {
       newState: recordState
     });
   });
 }
 
-function updateRecordingList(){
+function updateRecordingList() {
   authenticatedSockets.forEach((socket) => {
     socket.emit('RECORDINGS_UPDATE', recordingsManager.toClient());
   });
@@ -208,7 +208,7 @@ io.on('connection', (socket: SocketIO.Socket) => {
     authenticatedSockets.delete(socket);
   });
 
-  function addAuth(){
+  function addAuth() {
     authenticatedSockets.add(socket);
     //make sure to update recording state on authentication
     socket.emit('RECORD_TOGGLE', {
@@ -218,16 +218,16 @@ io.on('connection', (socket: SocketIO.Socket) => {
     socket.emit('RECORDINGS_UPDATE', recordingsManager.toClient());
   }
 
-  socket.on('authenticate', (data: {user: string, passHash: string}, callback: {(status: string): void}) => {
-    if (data == null){
+  socket.on('authenticate', (data: { user: string, passHash: string }, callback: { (status: string): void }) => {
+    if (data == null) {
       callback('');
       return;
     }
 
     data.user = data.user.toLowerCase();
-    if (data.user in users){
+    if (data.user in users) {
       //user exists
-      if (passwordHash.verify(users[data.user], data.passHash)){
+      if (passwordHash.verify(users[data.user], data.passHash)) {
         //password match! return true
         //add socket to authenticated sockets
         addAuth();
@@ -240,7 +240,7 @@ io.on('connection', (socket: SocketIO.Socket) => {
     }
   });
 
-  socket.on('RECORD_TOGGLE', (data: {newState: boolean}) => {
+  socket.on('RECORD_TOGGLE', (data: { newState: boolean }) => {
 
     if (authenticatedSockets.has(socket)) {
       changeState(data.newState, socket);
@@ -259,7 +259,7 @@ io.on('connection', (socket: SocketIO.Socket) => {
         callback(`/download?token=${token}`);
       });
 
-        
+
     }
   });
 
@@ -273,14 +273,14 @@ io.on('connection', (socket: SocketIO.Socket) => {
 
       if (!fs.existsSync(oldpath)) return;
 
-      fs.rename(oldpath, newpath, function(err) {
-        if ( err )
+      fs.rename(oldpath, newpath, function (err) {
+        if (err)
           console.log(`ERROR: ${err.message}`);
-        else{
+        else {
           recordingsManager.readDirectories();
         }
       });
-        
+
     }
   });
 
@@ -292,13 +292,13 @@ io.on('connection', (socket: SocketIO.Socket) => {
 
 
       if (!fs.existsSync(filepath)) return;
-      
-      console.log('deleting '+filepath);
+
+      console.log('deleting ' + filepath);
 
       fs.remove(filepath).then(() => {
         recordingsManager.readDirectories();
       });
-        
+
     }
   });
 
