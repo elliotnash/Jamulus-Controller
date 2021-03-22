@@ -54,7 +54,7 @@ export default class RecordingBox extends Vue {
     this.$refs.rename.open(recording);
   }
   startDownload(recording: {name: string, uuid: string, created: Date, processed: boolean}){
-    this.$store.dispatch('downloadFile', recording);
+    this.$store.dispatch('downloadZip', recording);
   }
   openDelete(recording: {name: string, uuid: string, created: Date, processed: boolean}){
     this.$refs.confirmation.open('DELETE', `Are you sure you want to delete ${recording.name}`).then((result) => {

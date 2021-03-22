@@ -70,7 +70,19 @@ const store = new Vuex.Store({
       });
 
     },
-    downloadFile(state, recording: {name: string, uuid: string, created: Date, processed: boolean}){
+    getMp3URL(state, recording: {name: string, uuid: string, created: Date, processed: boolean}){
+      return new Promise<String>((resolve) => {
+        console.log(recording);
+        socket.emit('DOWNLOAD_FILE', recording.uuid, (uri: string) => {
+          //first callback is on receive
+          console.log('server received download request');
+          
+          resolve(uri+"&track=master");
+
+        });
+      });
+    },
+    downloadZip(state, recording: {name: string, uuid: string, created: Date, processed: boolean}){
       return new Promise<void>((resolve) => {
         console.log(recording);
         socket.emit('DOWNLOAD_FILE', recording.uuid, (uri: string) => {
@@ -104,7 +116,7 @@ const store = new Vuex.Store({
 export default store;
 
 //let host = window.location.host;
-let host = '192.168.1.131:3080';
+let host = '192.168.0.221:3080';
 let socket = io.io(host);
 
 //TODO it'd be pretty pog to use decorator syntax for the store :P maybe never gonna happen ahahah:(

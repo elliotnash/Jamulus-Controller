@@ -46,21 +46,33 @@ app.use(express.static(path.join(__dirname, './client')));
 app.get('/download', function(req, res, next) {
   // Get the download sid
   const token = req.query.token as string;
+  const track = req.query.track as string;
 
-  // Get the download file path
-  downloadUtils.getDownload(token).then((path) => {
+  if (track == "master"){
+    downloadUtils.getDownload(token).then((path) => {
 
-    console.log(`${req.ip.substr( req.ip.lastIndexOf(':')+1 )} is downloading ${path}`);
+      console.log(`${req.ip.substr( req.ip.lastIndexOf(':')+1 )} is downloading ${path}/master.mp3`);
+  
+      res.sendFile(`${path}/master.mp3`);
+  
+    }).catch(() => {
+      next();
+    });
+  } else {
+    // Get the download file path for zip
+    downloadUtils.getDownload(token).then((path) => {
 
-    const zip = archiver.create('zip');
-    res.attachment(`${path.substr( path.lastIndexOf('/')+1 )}.zip`);
-    zip.pipe(res);
-    zip.directory(path, false).finalize();
+      console.log(`${req.ip.substr( req.ip.lastIndexOf(':')+1 )} is downloading ${path}`);
 
-  }).catch(() => {
-    next();
-    // res.send('download has expired');
-  });
+      const zip = archiver.create('zip');
+      res.attachment(`${path.substr( path.lastIndexOf('/')+1 )}.zip`);
+      zip.pipe(res);
+      zip.directory(path, false).finalize();
+
+    }).catch(() => {
+      next();
+    });
+  }
 });
 
 
