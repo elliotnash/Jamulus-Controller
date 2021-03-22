@@ -16,7 +16,7 @@ import DownloadUtils from './download-utils';
 import RecordingsManager from './recordings-manager';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const config = require('./config.json') as { port: string, users: { [key: string]: string }, systemdServiceName: string, recordingDirectory: string, downloadExpireTime: number };
+const config = require('../config.json') as { port: string, users: { [key: string]: string }, systemdServiceName: string, recordingDirectory: string, downloadExpireTime: number };
 config.recordingDirectory = config.recordingDirectory + "/";
 
 const users: { [key: string]: string } = {};
